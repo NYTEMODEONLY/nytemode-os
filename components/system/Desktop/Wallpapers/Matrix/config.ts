@@ -10,7 +10,7 @@ const config = {
   brightnessDecay: 1,
   brightnessOverride: 0,
   brightnessThreshold: 0,
-  cursorColor: { space: "rgb", values: [0.7, 0.4, 0.9] },
+  cursorColor: { space: "rgb", values: [1, 0.7, 1] },
   cycleFrameSkip: 4,
   cycleSpeed: 0.02,
   density: 1,
