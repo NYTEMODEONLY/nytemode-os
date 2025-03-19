@@ -22,7 +22,7 @@ const StyledPeekWindow = styled(motion.div)<StyledPeekWindowProps>`
     $offsetX ? `translateX(${$offsetX}px)` : undefined};
 
   ${StyledTaskbarEntry}:hover & {
-    background-color: hsla(0, 0%, 25%, 85%);
+    background-color: hsla(0, 0%, 18%, 85%);
 
     &:active {
       background-color: ${({ theme }) => theme.colors.taskbar.activeForeground};
