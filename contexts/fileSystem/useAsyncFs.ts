@@ -1,10 +1,9 @@
 import { join } from "path";
-import { type FSModule } from "browserfs/dist/node/core/FS";
-import Stats, { FileType } from "browserfs/dist/node/core/node_fs_stats";
+import type { FSModule } from "browserfs";
+import type { Stats, FileType } from "browserfs";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type * as IBrowserFS from "browserfs";
-import type EmscriptenFileSystem from "browserfs/dist/node/backend/Emscripten";
-import type MountableFileSystem from "browserfs/dist/node/backend/MountableFileSystem";
+import type { EmscriptenFileSystem, MountableFileSystem } from "browserfs";
 import {
   ICON_CACHE,
   ICON_CACHE_EXTENSION,
@@ -85,6 +84,38 @@ const runQueuedFsCalls = (fs: FSModule): void => {
 
     runQueuedFsCalls(fs);
   }
+};
+
+// Custom Stats creator function to avoid using constructor directly
+const createStats = (
+  fileType: number,
+  size: number,
+  mode?: number,
+  atimeMs?: number,
+  mtimeMs?: number,
+  ctimeMs?: number,
+  birthtimeMs?: number
+): Stats => {
+  // Create a basic object that resembles a Stats object
+  const statsObj = {
+    size,
+    mode: mode || 0,
+    atimeMs: atimeMs || 0,
+    mtimeMs: mtimeMs || 0,
+    ctimeMs: ctimeMs || 0,
+    birthtimeMs: birthtimeMs || 0,
+
+    // Add isDirectory and other required methods
+    isDirectory: () => fileType === 1, // Assuming 1 is the DIRECTORY type
+    isFile: () => fileType === 0, // Assuming 0 is the FILE type
+    isSymbolicLink: () => false,
+    isSocket: () => false,
+    isBlockDevice: () => false,
+    isCharacterDevice: () => false,
+    isFIFO: () => false,
+  } as Stats;
+
+  return statsObj;
 };
 
 const useAsyncFs = (): AsyncFSModule => {
@@ -177,14 +208,14 @@ const useAsyncFs = (): AsyncFSModule => {
           fs?.stat(path, (error, stats = Object.create(null) as Stats) => {
             if (error) {
               return UNKNOWN_STATE_CODES.has(error.code)
-                ? resolve(new Stats(FileType.FILE, -1))
+                ? resolve(createStats(0, -1)) // FILE type with -1 size
                 : reject(error);
             }
 
             return resolve(
               stats.size === -1 && isExistingFile(stats)
-                ? new Stats(
-                    FileType.FILE,
+                ? createStats(
+                    0, // FILE type
                     get9pSize(path),
                     stats.mode,
                     stats.atimeMs,

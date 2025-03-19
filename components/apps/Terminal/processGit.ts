@@ -1,5 +1,8 @@
-import { join } from "path";
-import { type FSModule } from "browserfs/dist/node/core/FS";
+import { basename, dirname, join } from "path";
+import { Buffer } from "buffer";
+import * as git from "isomorphic-git";
+import http from "isomorphic-git/http/web";
+import type { FSModule } from "browserfs";
 import {
   type AuthCallback,
   type GitAuth,
@@ -48,10 +51,7 @@ const processGit = async (
   fs: FSModule,
   updateFolder: (folder: string, newFile?: string, oldFile?: string) => void
 ): Promise<void> => {
-  const git = await import("isomorphic-git");
-
   if (command in git) {
-    const http = await import("isomorphic-git/http/web");
     const { default: minimist } = await import("minimist");
     const { username, password, ...cliArgs } = minimist(args) as GitAuth &
       ParsedArgs;

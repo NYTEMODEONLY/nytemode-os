@@ -1,22 +1,21 @@
 {
-  "name": "daedalos",
-  "version": "2.0.0",
-  "description": "Desktop environment in the browser",
+  "name": "nytemode-os",
+  "version": "1.0.0",
+  "description": "NYTEMODE OS - A personalized desktop environment in the browser",
   "author": {
-    "name": "Dustin Brett",
-    "email": "dustinbrett@gmail.com",
-    "url": "https://dustinbrett.com"
+    "name": "NYTEMODEONLY",
+    "url": "https://github.com/NYTEMODEONLY"
   },
   "license": "MIT",
   "browserslist": [
     "defaults and supports es6 and not ie 11 and >1%"
   ],
   "scripts": {
-    "build": "yarn build:prebuild && next build",
-    "build:bundle-analyzer": "yarn build",
+    "build": "npm run build:prebuild && next build",
+    "build:bundle-analyzer": "npm run build",
     "build:fs": "node scripts/fs2json.js --exclude .index --out public/.index/fs.9p.json ./public",
     "build:minify": "node scripts/minifyHtml.js && node scripts/minifyJs.js",
-    "build:prebuild": "node scripts/robots.js && node scripts/rssBuilder.js && node scripts/searchIndex.js && node scripts/preloadIcons.js && node scripts/cacheShortcuts.js && yarn build:fs",
+    "build:prebuild": "node scripts/robots.js && node scripts/rssBuilder.js && node scripts/searchIndex.js && node scripts/preloadIcons.js && node scripts/cacheShortcuts.js && npm run build:fs",
     "docker:build": "docker build -t daedalos .",
     "docker:run": "docker run -dp 3000:3000 --rm --name daedalos daedalos",
     "dev": "next dev",
@@ -30,7 +29,7 @@
     "stylelint": "stylelint --formatter=verbose **/*.ts*",
     "test": "jest",
     "unused-exports": "ts-prune --project tsconfig.json --ignore \"\\pages|\\e2e\" --error",
-    "update": "yarn upgrade-interactive --latest"
+    "update": "npm update -i"
   },
   "lint-staged": {
     "*": "prettier --ignore-unknown --write",
@@ -48,7 +47,7 @@
     "@prettier/plugin-xml": "^3.4.1",
     "@wasmer/wasm-transformer": "^0.12.0",
     "ani-cursor": "^0.0.5",
-    "browserfs": "https://github.com/jvilk/BrowserFS.git#a96aa2d",
+    "browserfs": "git+https://github.com/jvilk/BrowserFS.git#a96aa2d",
     "butterchurn-presets": "^3.0.0-beta.4",
     "canvas-confetti": "^1.9.3",
     "decode-ico": "^0.4.1",
@@ -80,7 +79,7 @@
     "resedit": "^2.0.3",
     "rtf.js": "^3.0.9",
     "styled-components": "^6.1.16",
-    "utif": "https://github.com/photopea/UTIF.js",
+    "utif": "git+https://github.com/photopea/UTIF.js",
     "wasi-js": "^1.7.3"
   },
   "devDependencies": {

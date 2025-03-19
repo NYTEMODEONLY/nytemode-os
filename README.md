@@ -1,6 +1,6 @@
-## 🌌 **daedalOS** 🌌
+## 🌌 **NYTEMODE OS** 🌌
 
-## _Desktop environment in the browser_
+## _A personalized desktop environment in the browser_
 
 [![Feature Overview](https://img.youtube.com/vi/RRLq3T0Surs/mqdefault.jpg)](http://www.youtube.com/watch?v=RRLq3T0Surs)
 

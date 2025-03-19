@@ -23,7 +23,7 @@ import {
 const { alias, author, description } = PACKAGE_DATA;
 
 const Metadata: FC = () => {
-  const [title, setTitle] = useState(alias);
+  const [title, setTitle] = useState("NYTEMODE OS");
   const [favIcon, setFavIcon] = useState("");
   const { readFile } = useFileSystem();
   const [customCursor, setCustomCursor] = useState("");
@@ -138,16 +138,16 @@ const Metadata: FC = () => {
         content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, interactive-widget=resizes-content"
         name="viewport"
       />
-      <meta content={description} name="description" />
-      <meta content={alias} property="og:title" />
+      <meta content="NYTEMODE OS - A personalized desktop environment in your browser" name="description" />
+      <meta content="NYTEMODE OS" property="og:title" />
       <meta content="website" property="og:type" />
-      <meta content={author.url} property="og:url" />
-      <meta content={`${author.url}/screenshot.png`} property="og:image" />
-      <meta content={description} property="og:description" />
+      <meta content="https://github.com/NYTEMODEONLY" property="og:url" />
+      <meta content="https://github.com/NYTEMODEONLY/nytemode-os/raw/main/screenshot.png" property="og:image" />
+      <meta content="NYTEMODE OS - A personalized desktop environment in your browser" property="og:description" />
       <link
-        href={`${author.url}/rss.xml`}
+        href="https://github.com/NYTEMODEONLY/nytemode-os/rss.xml"
         rel="alternate"
-        title={`RSS Feed for ${alias}`}
+        title="RSS Feed for NYTEMODE OS"
         type="application/rss+xml"
       />
       {desktopIcons.map((icon) => {

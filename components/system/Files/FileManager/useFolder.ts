@@ -1,8 +1,8 @@
 import { basename, dirname, extname, join, relative } from "path";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Buffer } from "buffer";
 import { type AsyncZipOptions, type AsyncZippable } from "fflate";
-import { type ApiError } from "browserfs/dist/node/core/api_error";
-import type Stats from "browserfs/dist/node/core/node_fs_stats";
+import type { ApiError, Stats } from "browserfs";
 import useTransferDialog, {
   type ObjectReader,
 } from "components/system/Dialogs/Transfer/useTransferDialog";

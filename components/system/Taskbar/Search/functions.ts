@@ -1,6 +1,5 @@
-import { join } from "path";
-import { type FSModule } from "browserfs/dist/node/core/FS";
-import type Stats from "browserfs/dist/node/core/node_fs_stats";
+import { basename, dirname, join } from "path";
+import type { FSModule, Stats } from "browserfs";
 import {
   getCachedIconUrl,
   getFileType,
@@ -16,7 +15,7 @@ import {
   YT_ICON_CACHE,
 } from "utils/constants";
 import { getExtension, isYouTubeUrl } from "utils/functions";
-import { type RootFileSystem } from "contexts/fileSystem/useAsyncFs";
+import { type AsyncFS } from "contexts/fileSystem/useAsyncFs";
 
 export type ResultInfo = {
   icon: string;
@@ -49,7 +48,7 @@ export const getResultInfo = async (
       } else {
         getInfoWithoutExtension(
           fs,
-          fs.getRootFS() as RootFileSystem,
+          fs.getRootFS() as AsyncFS,
           url,
           isDirectory,
           false,

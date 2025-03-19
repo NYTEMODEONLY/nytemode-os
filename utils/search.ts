@@ -1,14 +1,14 @@
-import { basename, extname } from "path";
+import { basename, extname, join } from "path";
 import { useEffect, useState } from "react";
-import { type Index } from "lunr";
-import type OverlayFS from "browserfs/dist/node/backend/OverlayFS";
-import type IndexedDBFileSystem from "browserfs/dist/node/backend/IndexedDB";
+import lunr from "lunr";
+import type { OverlayFS, IndexedDBFileSystem } from "browserfs";
 import { useFileSystem } from "contexts/fileSystem";
 import { type RootFileSystem } from "contexts/fileSystem/useAsyncFs";
 import SEARCH_EXTENSIONS from "scripts/searchExtensions.json";
 import {
   DISBALE_AUTO_INPUT_FEATURES,
   HIGH_PRIORITY_REQUEST,
+  SEARCH_FS_EXCLUDE,
 } from "utils/constants";
 import { getExtension, loadFiles } from "utils/functions";
 
@@ -28,17 +28,17 @@ export const SEARCH_INPUT_PROPS = {
   HTMLInputElement
 >;
 
-let baseIndex = Object.create(null) as Index;
+let baseIndex = Object.create(null) as lunr.Index;
 let basePaths = [] as string[];
 
-type ResponseIndex = Index & {
+type ResponseIndex = lunr.Index & {
   paths: string[];
 };
 
 const search = async (
   searchTerm: string,
-  index?: Index
-): Promise<Index.Result[]> => {
+  index?: lunr.Index
+): Promise<lunr.Index.Result[]> => {
   if (!window.lunr) await loadFiles([SEARCH_LIB]);
   if (!index && !baseIndex?.search) {
     const response = await fetch(FILE_INDEX, HIGH_PRIORITY_REQUEST);
@@ -56,7 +56,7 @@ const search = async (
   }
 
   const searchIndex = index ?? baseIndex;
-  let results: Index.Result[] = [];
+  let results: lunr.Index.Result[] = [];
   const normalizedSearchTerm = searchTerm
     .trim()
     .replace(/\./g, " ")
@@ -96,7 +96,7 @@ interface IWritableFs extends Omit<IndexedDBFileSystem, "_cache"> {
 const buildDynamicIndex = async (
   readFile: (path: string) => Promise<Buffer>,
   rootFs?: RootFileSystem
-): Promise<Index> => {
+): Promise<lunr.Index> => {
   const overlayFs = rootFs?._getFs("/")?.fs as OverlayFS;
   const overlayedFileSystems = overlayFs?.getOverlayedFileSystems();
   const writable = overlayedFileSystems?.writable as IWritableFs;
@@ -141,7 +141,7 @@ export const fullSearch = async (
   searchTerm: string,
   readFile: (path: string) => Promise<Buffer>,
   rootFs?: RootFileSystem
-): Promise<Index.Result[]> => {
+): Promise<lunr.Index.Result[]> => {
   const baseResult = await search(searchTerm);
   const dynamicIndex = await buildDynamicIndex(readFile, rootFs);
   const dynamicResult = await search(searchTerm, dynamicIndex);
@@ -149,8 +149,8 @@ export const fullSearch = async (
   return [...baseResult, ...dynamicResult].sort((a, b) => b.score - a.score);
 };
 
-export const useSearch = (searchTerm: string): Index.Result[] => {
-  const [results, setResults] = useState([] as Index.Result[]);
+export const useSearch = (searchTerm: string): lunr.Index.Result[] => {
+  const [results, setResults] = useState([] as lunr.Index.Result[]);
   const { readFile, rootFs } = useFileSystem();
 
   useEffect(() => {

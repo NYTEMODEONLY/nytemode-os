@@ -1,6 +1,6 @@
-import { basename, extname } from "path";
+import { basename, dirname, isAbsolute, join } from "path";
 import { useEffect, useMemo, useRef, useState } from "react";
-import type Stats from "browserfs/dist/node/core/node_fs_stats";
+import type { Stats } from "browserfs";
 import useResultsContextMenu from "components/system/Taskbar/Search/useResultsContextMenu";
 import {
   getModifiedTime,

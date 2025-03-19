@@ -1,5 +1,5 @@
 import { basename, dirname, extname, join } from "path";
-import type Stats from "browserfs/dist/node/core/node_fs_stats";
+import type { Stats } from "browserfs";
 import {
   type FileReaders,
   type ObjectReader,

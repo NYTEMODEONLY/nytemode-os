@@ -22,7 +22,7 @@ export const DEFAULT_CLOCK_SOURCE: ClockSource = "local";
 
 export const DEFAULT_THEME: ThemeName = "defaultTheme";
 
-export const DEFAULT_WALLPAPER = "VANTA";
+export const DEFAULT_WALLPAPER = "MATRIX";
 
 export const DEFAULT_WALLPAPER_FIT: WallpaperFit = "fill";
 
@@ -363,16 +363,14 @@ export const DEFAULT_SCROLLBAR_WIDTH = 17;
 export const TASKBAR_HEIGHT = 30;
 
 export const PACKAGE_DATA = {
-  alias: "daedalOS",
+  alias: "NYTEMODE OS",
   author: {
-    email: "dustinbrett@gmail.com",
-    name: "Dustin Brett",
-    npub: "npub10uc7hg6wdxhhd7ee8x9c5lr9d0ux7272rv2m0mc03ds54q7quxjss02r3p",
-    url: "https://dustinbrett.com",
+    name: "NYTEMODEONLY",
+    url: "https://github.com/NYTEMODEONLY",
   },
-  description: "Desktop environment in the browser",
+  description: "NYTEMODE OS - A personalized desktop environment in your browser",
   license: "MIT",
-  version: "2.0.0",
+  version: "1.0.0",
 };
 
 export const BASE_ZIP_CONFIG: AsyncZipOptions = {
