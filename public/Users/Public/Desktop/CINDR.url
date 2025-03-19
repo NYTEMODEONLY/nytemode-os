@@ -2,4 +2,5 @@
 BaseURL=Browser
 Comment=CINDR Token - Cryptocurrency Project
 IconFile=/System/Icons/cindr_flame.webp
+Type=System
 URL=https://cindrtoken.com
