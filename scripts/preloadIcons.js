@@ -43,8 +43,12 @@ const getYouTubeUrlId = (url) => {
 
 const getPublicDirectoryIcons = (directory) => [
   ...new Set(
-    readdirSync(join(PUBLIC_DIR, directory)).reduce((icons, file) => {
-      if (extname(file).toLowerCase() === ".url") {
+    readdirSync(join(PUBLIC_DIR, directory))
+      .filter(
+        (file) =>
+          file !== "Refresh.url" && extname(file).toLowerCase() === ".url"
+      )
+      .reduce((icons, file) => {
         const {
           InternetShortcut: {
             BaseURL: pid = "",
@@ -80,10 +84,9 @@ const getPublicDirectoryIcons = (directory) => [
             }
           }
         }
-      }
 
-      return icons;
-    }, [])
+        return icons;
+      }, [])
   ),
 ];
 
