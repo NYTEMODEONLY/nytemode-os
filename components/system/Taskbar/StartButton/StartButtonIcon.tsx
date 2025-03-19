@@ -5,7 +5,12 @@ const DEFAULT_ICON_SIZE = "24px";
 // Define SVG as a constant for reuse
 const NYTEMODE_SVG = `
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#7c519d" font-size="36" font-weight="bold" font-family="Arial, sans-serif">N</text>
+  <defs>
+    <style>
+      @import url('https://fonts.cdnfonts.com/css/akira-expanded');
+    </style>
+  </defs>
+  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#7c519d" font-size="36" font-weight="bold" font-family="'Akira Expanded', Arial, sans-serif">N</text>
 </svg>
 `;
 
