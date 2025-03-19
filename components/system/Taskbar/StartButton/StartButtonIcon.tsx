@@ -1,43 +1,41 @@
 import { memo, useEffect, useState } from "react";
 
-// Use a direct URL to a clearer version of the favicon if possible
-// For best results, consider adding multiple sizes for better clarity
-const NYTEMODE_FAVICON_URL = "https://nytemode.com/favicon.ico";
-const NYTEMODE_BACKUP_URL = "https://nytemode.com/apple-touch-icon.png"; // Try to find higher-res icon
+// Use local high-resolution icon for better clarity
+const LOCAL_ICON_PATH = "/System/Icons/144x144/desktop.webp";
+const FALLBACK_ICON_PATH = "/System/Icons/96x96/desktop.webp";
 const DEFAULT_ICON_SIZE = "24px";
 
 const StartButtonIcon = memo(() => {
-  const [faviconUrl, setFaviconUrl] = useState(NYTEMODE_FAVICON_URL);
+  const [iconPath, setIconPath] = useState(LOCAL_ICON_PATH);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // First try the high-resolution icon if available
-    const tryHighResIcon = () => {
-      const highResImg = new Image();
-      highResImg.onload = () => {
-        setFaviconUrl(NYTEMODE_BACKUP_URL);
+    const loadIcon = () => {
+      const img = new Image();
+      img.onload = () => {
         setIsLoading(false);
       };
-      highResImg.onerror = () => {
-        // Fall back to standard favicon
-        const img = new Image();
-        img.onload = () => {
+      img.onerror = () => {
+        console.error("Failed to load high-res icon, trying fallback");
+        setIconPath(FALLBACK_ICON_PATH);
+
+        const fallbackImg = new Image();
+        fallbackImg.onload = () => {
           setIsLoading(false);
         };
-        img.onerror = () => {
-          console.error("Failed to load favicon from nytemode.com");
+        fallbackImg.onerror = () => {
+          console.error("Failed to load fallback icon");
           setIsLoading(false);
         };
-        img.src = NYTEMODE_FAVICON_URL;
+        fallbackImg.src = FALLBACK_ICON_PATH;
       };
-      highResImg.src = NYTEMODE_BACKUP_URL;
+      img.src = LOCAL_ICON_PATH;
     };
 
-    tryHighResIcon();
+    loadIcon();
 
-    // Cleanup function
     return () => {
-      // Nothing to clean up
+      // No cleanup needed
     };
   }, []);
 
@@ -62,18 +60,19 @@ const StartButtonIcon = memo(() => {
         />
       ) : (
         <img
-          src={faviconUrl}
+          src={iconPath}
           alt="Start"
           style={{
             width: DEFAULT_ICON_SIZE,
             height: DEFAULT_ICON_SIZE,
             objectFit: "contain",
-            imageRendering: "crisp-edges", // Helps with pixel-perfect rendering
-            display: "block", // Removes any extra spacing
+            imageRendering: "pixelated", // Better for downscaling high-res images
+            display: "block",
             maxWidth: "100%",
             maxHeight: "100%",
+            transform: "scale(0.9)", // Slightly smaller to avoid pixelation at edges
           }}
-          draggable={false} // Prevent accidental dragging
+          draggable={false}
         />
       )}
     </div>
