@@ -1,5 +1,5 @@
 [InternetShortcut]
 BaseURL=Browser
 Comment=Reload the page to see changes
-IconFile=/System/Icons/48x48/refresh.png
+IconFile=/System/Icons/refresh.png
 URL=javascript:location.reload()
