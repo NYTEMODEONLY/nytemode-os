@@ -203,7 +203,16 @@ export const SHORTCUT_APPEND = " - Shortcut";
 
 export const SHORTCUT_EXTENSION = ".url";
 
-export const SYSTEM_FILES = new Set(["desktop.ini"]);
+export const SYSTEM_FILES = new Set([
+  ".DS_Store",
+  "Thumbs.db",
+  "desktop.ini",
+  "folder.ico",
+  "folder.jpg",
+  "$RECYCLE.BIN",
+  "System Volume Information",
+  "Refresh.url"
+]);
 
 export const SYSTEM_PATHS = new Set(["/.deletedFiles.log"]);
 
