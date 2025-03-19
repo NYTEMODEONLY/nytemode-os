@@ -34,6 +34,7 @@ export type WallpaperMenuItem = {
   name?: string;
   requiresWebGPU?: boolean;
   startsWith?: boolean;
+  disabled?: boolean;
 };
 
 export type WallpaperMessage = { message: string; type: string };

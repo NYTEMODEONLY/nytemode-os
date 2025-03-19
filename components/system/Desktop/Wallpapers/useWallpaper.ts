@@ -123,16 +123,6 @@ const useWallpaper = (
                 forwardSpeed: -0.25,
               }),
         };
-      } else if (wallpaperName === "STABLE_DIFFUSION") {
-        const promptsFilePath = `${PICTURES_FOLDER}/${PROMPT_FILE}`;
-
-        if (await exists(promptsFilePath)) {
-          config = {
-            prompts: JSON.parse(
-              (await readFile(promptsFilePath))?.toString() || "[]"
-            ) as [string, string][],
-          };
-        }
       }
 
       document.documentElement.style.setProperty(
@@ -159,52 +149,19 @@ const useWallpaper = (
             [offscreen]
           );
 
-          if (wallpaperName === "STABLE_DIFFUSION") {
-            const loadingStatus = document.createElement("div");
-
-            loadingStatus.id = "loading-status";
-
-            desktopRef.current?.append(loadingStatus);
-
-            window.WallpaperDestroy = () => {
-              loadingStatus.remove();
-              window.WallpaperDestroy = undefined;
-            };
-
-            wallpaperWorker.current.addEventListener(
-              "message",
-              ({ data }: { data: WallpaperMessage }) => {
-                if (data.type === "[error]") {
+          wallpaperWorker.current.addEventListener(
+            "message",
+            ({ data }: { data: WallpaperMessage }) => {
+              if (data.type === "[error]") {
+                if (data.message.includes("getContext")) {
+                  failedOffscreenContext.current = true;
+                  loadWallpaper();
+                } else {
                   setWallpaper(DEFAULT_WALLPAPER);
-                } else if (data.type) {
-                  loadingStatus.textContent = data.message || "";
-                } else if (!data.message) {
-                  wallpaperTimerRef.current = window.setTimeout(
-                    () => loadWallpaper(true),
-                    MILLISECONDS_IN_MINUTE *
-                      (window.STABLE_DIFFUSION_DELAY_IN_MIN_OVERRIDE ??
-                        STABLE_DIFFUSION_DELAY_IN_MIN)
-                  );
-                }
-
-                loadingStatus.style.display = data.message ? "block" : "none";
-              }
-            );
-          } else {
-            wallpaperWorker.current.addEventListener(
-              "message",
-              ({ data }: { data: WallpaperMessage }) => {
-                if (data.type === "[error]") {
-                  if (data.message.includes("getContext")) {
-                    failedOffscreenContext.current = true;
-                    loadWallpaper();
-                  } else {
-                    setWallpaper("SLIDESHOW");
-                  }
                 }
               }
-            );
-          }
+            }
+          );
         }
       } else if (WALLPAPER_PATHS[wallpaperName]) {
         const fallbackWallpaper = (): void =>

@@ -456,7 +456,8 @@ const useFolderContextMenu = (
                 {
                   label: "Background",
                   menu: WALLPAPER_MENU.filter(
-                    ({ requiresWebGPU }) => !requiresWebGPU || hasWebGPU
+                    ({ requiresWebGPU, disabled }) =>
+                      !requiresWebGPU && !disabled
                   ).reduce<MenuItem[]>(
                     (menu, item) => [
                       ...menu,

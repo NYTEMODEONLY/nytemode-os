@@ -16,37 +16,11 @@ export const WALLPAPER_PATHS: Record<
   string,
   () => Promise<{ default: WallpaperFunc; libs: string[] }>
 > = {
-  COASTAL_LANDSCAPE: () =>
-    import("components/system/Desktop/Wallpapers/ShaderToy/CoastalLandscape"),
-  HEXELLS: () => import("components/system/Desktop/Wallpapers/hexells"),
   MATRIX: () => import("components/system/Desktop/Wallpapers/Matrix"),
-  STABLE_DIFFUSION: () =>
-    import("components/system/Desktop/Wallpapers/StableDiffusion"),
   VANTA: () => import("components/system/Desktop/Wallpapers/vantaWaves"),
 };
 
 export const WALLPAPER_WORKERS: Record<string, () => Worker> = {
-  COASTAL_LANDSCAPE: (): Worker =>
-    new Worker(
-      new URL(
-        "components/system/Desktop/Wallpapers/ShaderToy/CoastalLandscape/wallpaper.worker",
-        import.meta.url
-      ),
-      { name: "Wallpaper (Coastal Landscape)" }
-    ),
-  HEXELLS: (): Worker =>
-    new Worker(
-      new URL(
-        "components/system/Desktop/Wallpapers/hexells/wallpaper.worker",
-        import.meta.url
-      ),
-      { name: "Wallpaper (Hexells)" }
-    ),
-  STABLE_DIFFUSION: (): Worker =>
-    new Worker(
-      new URL("components/apps/StableDiffusion/sd.worker", import.meta.url),
-      { name: "Wallpaper (Stable Diffusion)" }
-    ),
   VANTA: (): Worker =>
     new Worker(
       new URL(
@@ -63,14 +37,6 @@ export const REDUCED_MOTION_PERCENT = 0.1;
 
 export const WALLPAPER_MENU: WallpaperMenuItem[] = [
   {
-    id: "COASTAL_LANDSCAPE",
-    name: "Coastal Landscape",
-  },
-  {
-    id: "HEXELLS",
-    name: "Hexells",
-  },
-  {
     id: "MATRIX 2D",
     name: "Matrix (2D)",
   },
@@ -79,18 +45,9 @@ export const WALLPAPER_MENU: WallpaperMenuItem[] = [
     name: "Matrix (3D)",
   },
   {
-    id: "APOD",
-    name: "NASA APOD",
-    startsWith: true,
-  },
-  {
     id: "SLIDESHOW",
     name: "Picture Slideshow",
-  },
-  {
-    id: "STABLE_DIFFUSION",
-    name: "Stable Diffusion (beta)",
-    requiresWebGPU: true,
+    disabled: true,
   },
   {
     id: "VANTA",
