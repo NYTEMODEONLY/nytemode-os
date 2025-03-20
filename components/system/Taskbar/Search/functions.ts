@@ -15,7 +15,10 @@ import {
   YT_ICON_CACHE,
 } from "utils/constants";
 import { getExtension, isYouTubeUrl } from "utils/functions";
-import { type AsyncFS } from "contexts/fileSystem/useAsyncFs";
+import {
+  type AsyncFS,
+  type RootFileSystem,
+} from "contexts/fileSystem/useAsyncFs";
 
 export type ResultInfo = {
   icon: string;
@@ -48,7 +51,7 @@ export const getResultInfo = async (
       } else {
         getInfoWithoutExtension(
           fs,
-          fs.getRootFS() as AsyncFS,
+          null as unknown as RootFileSystem,
           url,
           isDirectory,
           false,

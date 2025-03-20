@@ -408,7 +408,7 @@ const useFolder = (
 
       if (pathExtension === SHORTCUT_EXTENSION) {
         fs?.readFile(path, (_readError, contents = Buffer.from("")) =>
-          newPath(basename(path), contents)
+          newPath(basename(path), contents as Buffer)
         );
         return;
       }

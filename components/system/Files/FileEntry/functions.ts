@@ -224,7 +224,7 @@ export const getCachedIconUrl = async (
             cachedIconPath,
             (readError, cachedIconData = Buffer.from("")) => {
               if (cachedIconData.length >= SMALLEST_PNG_SIZE) {
-                resolve(bufferToUrl(cachedIconData));
+                resolve(bufferToUrl(cachedIconData as Buffer));
               } else if (!readError) fs.unlink(cachedIconPath);
             }
           );
@@ -374,7 +374,7 @@ export const getInfoWithExtension = (
             if (!signal.aborted) {
               const decodedImage = await decodeImageToBuffer(
                 extension,
-                contents
+                contents as Buffer
               );
 
               if (decodedImage) image = decodedImage;
@@ -382,7 +382,9 @@ export const getInfoWithExtension = (
           }
 
           if (!signal.aborted) {
-            getInfoByFileExtension(bufferToUrl(image, getMimeType(path)));
+            getInfoByFileExtension(
+              bufferToUrl(image as Buffer, getMimeType(path))
+            );
           }
         }
       })
@@ -551,7 +553,7 @@ export const getInfoWithExtension = (
           } else {
             fs.readFile(path, (readError, contents): void => {
               if (readError || !contents) getInfoByFileExtension();
-              else handleShortcut(getShortcutInfo(contents));
+              else handleShortcut(getShortcutInfo(contents as Buffer));
             });
           }
         });
@@ -564,7 +566,7 @@ export const getInfoWithExtension = (
             const { extractExeIcon } = await import(
               "components/system/Files/FileEntry/exeIcons"
             );
-            const exeIcon = await extractExeIcon(contents);
+            const exeIcon = await extractExeIcon(contents as Buffer);
 
             if (exeIcon && !signal.aborted) {
               getInfoByFileExtension(bufferToUrl(exeIcon));
@@ -583,11 +585,13 @@ export const getInfoWithExtension = (
         (signal) =>
           fs.readFile(path, (error, contents = Buffer.from("")) => {
             if (!error && !signal.aborted) {
-              getCoverArt(path, contents, signal).then((coverPicture) => {
-                if (coverPicture) {
-                  getInfoByFileExtension(bufferToUrl(coverPicture));
+              getCoverArt(path, contents as Buffer, signal).then(
+                (coverPicture) => {
+                  if (coverPicture) {
+                    getInfoByFileExtension(bufferToUrl(coverPicture));
+                  }
                 }
-              });
+              );
             }
           })
       );
@@ -668,13 +672,13 @@ export const getInfoWithExtension = (
 
               if (contents.length > MAX_THUMBNAIL_FILE_SIZE) {
                 resizeImage(
-                  bufferToBlob(contents, mimeType),
+                  bufferToBlob(contents as Buffer, mimeType),
                   MAX_ICON_SIZE
                 ).then((resizedBlob) => {
                   imageIcon.src = URL.createObjectURL(resizedBlob);
                 });
               } else {
-                imageIcon.src = bufferToUrl(contents, mimeType);
+                imageIcon.src = bufferToUrl(contents as Buffer, mimeType);
               }
             }
           })
@@ -790,7 +794,7 @@ export const getInfoWithExtension = (
               );
 
               video.src = bufferToUrl(
-                contents,
+                contents as Buffer,
                 isSafari()
                   ? getMimeType(path) || VIDEO_FALLBACK_MIME_TYPE
                   : undefined

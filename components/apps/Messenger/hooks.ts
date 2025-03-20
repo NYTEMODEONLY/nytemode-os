@@ -130,14 +130,7 @@ export const useNostrContacts = (
 ): NostrContacts => {
   const globalContacts = useMemo(
     () =>
-      [
-        ...(PACKAGE_DATA?.author?.npub
-          ? new Set([
-              toHexKey(PACKAGE_DATA.author.npub),
-              ...Object.values(wellKnownNames || {}),
-            ])
-          : Object.values(wellKnownNames || {})),
-      ]
+      [...Object.values(wellKnownNames || {})]
         .filter(Boolean)
         .map((key) => toHexKey(key)),
     [wellKnownNames]
