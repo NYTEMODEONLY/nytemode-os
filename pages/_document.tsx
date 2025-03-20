@@ -42,7 +42,10 @@ class Document extends NextDocument {
   public override render(): React.JSX.Element {
     return (
       <Html lang={DEFAULT_LOCALE}>
-        <Head />
+        <Head>
+          <link rel="icon" href="/favicon.ico" sizes="any" />
+          <link rel="apple-touch-icon" href="/favicon.ico" />
+        </Head>
         <body>
           <Main />
           <NextScript />

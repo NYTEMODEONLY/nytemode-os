@@ -138,16 +138,19 @@ const Metadata: FC = () => {
         content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, interactive-widget=resizes-content"
         name="viewport"
       />
-      <meta content="NYTEMODE OS - A personalized desktop environment in your browser" name="description" />
-      <meta content="NYTEMODE OS" property="og:title" />
+      <meta content={description} name="description" />
+      <meta content={alias} property="og:title" />
       <meta content="website" property="og:type" />
-      <meta content="https://github.com/NYTEMODEONLY" property="og:url" />
-      <meta content="https://github.com/NYTEMODEONLY/nytemode-os/raw/main/screenshot.png" property="og:image" />
-      <meta content="NYTEMODE OS - A personalized desktop environment in your browser" property="og:description" />
+      <meta content={author.url} property="og:url" />
+      <meta
+        content="https://github.com/NYTEMODEONLY/nytemode-os/raw/main/screenshot.png"
+        property="og:image"
+      />
+      <meta content={description} property="og:description" />
       <link
         href="https://github.com/NYTEMODEONLY/nytemode-os/rss.xml"
         rel="alternate"
-        title="RSS Feed for NYTEMODE OS"
+        title={`RSS Feed for ${alias}`}
         type="application/rss+xml"
       />
       {desktopIcons.map((icon) => {
