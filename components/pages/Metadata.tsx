@@ -36,9 +36,8 @@ const Metadata: FC = () => {
   } = process || {};
   const resetFaviconAndTitle = useCallback((): void => {
     setTitle(alias);
-    setFavIcon((currentFavicon) =>
-      currentFavicon ? FAVICON_BASE_PATH : currentFavicon
-    );
+    // Clear the favIcon state completely to let document favicon take over
+    setFavIcon("");
   }, []);
   const currentFavIcon = useMemo(
     () =>
@@ -78,8 +77,13 @@ const Metadata: FC = () => {
       const documentTitle = processTitle ? `${processTitle} - ${alias}` : alias;
 
       if (title !== documentTitle) setTitle(documentTitle);
-      if (favIcon !== processIcon || !favIcon) {
-        setFavIcon(encodeURI(processIcon) || FAVICON_BASE_PATH);
+      // Only set a favicon from process if it's a dynamic app icon
+      if (
+        processIcon &&
+        isDynamicIcon(processIcon) &&
+        favIcon !== processIcon
+      ) {
+        setFavIcon(encodeURI(processIcon));
       }
     } else {
       resetFaviconAndTitle();
@@ -98,15 +102,7 @@ const Metadata: FC = () => {
       if (document.visibilityState === "visible") resetFaviconAndTitle();
     };
     const onBeforeUnload = (): void => {
-      const faviconLinkElement = document.querySelector("link[rel=icon]");
-
-      if (faviconLinkElement instanceof HTMLLinkElement) {
-        try {
-          faviconLinkElement.href = FAVICON_BASE_PATH;
-        } catch {
-          // Ignore failure to set link href
-        }
-      }
+      // Empty function to avoid conflicts with document-level icons
     };
 
     window.addEventListener(
@@ -128,12 +124,40 @@ const Metadata: FC = () => {
     if (cursor) getCursor(cursor).then(setCustomCursor);
   }, [cursor, getCursor]);
 
+  // Detect if the device is mobile
+  const isMobileDevice = useMemo(() => {
+    if (typeof window === "undefined") return false;
+    return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  }, []);
+
   return (
     <Head>
       <title>{title}</title>
+      {/* Dynamic app-specific favicon */}
       {currentFavIcon && (
         <link href={currentFavIcon} rel="icon" type={favIconMimeType} />
       )}
+
+      {/* Always provide these for iOS */}
+      <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+      <link
+        rel="apple-touch-icon-precomposed"
+        href="/apple-touch-icon-precomposed.png"
+      />
+
+      {/* Mobile-specific override as a forced fallback */}
+      {isMobileDevice && (
+        <>
+          <link
+            rel="shortcut icon"
+            href="/apple-touch-icon.png"
+            type="image/png"
+          />
+          <meta name="apple-mobile-web-app-capable" content="yes" />
+          <meta name="mobile-web-app-capable" content="yes" />
+        </>
+      )}
+
       <meta
         content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, interactive-widget=resizes-content"
         name="viewport"
@@ -178,6 +202,16 @@ const Metadata: FC = () => {
       })}
       {customCursor && (
         <style>{`*, *::before, *::after { cursor: url(${customCursor}), default !important; }`}</style>
+      )}
+
+      {/* Mobile-specific icon injection via CSS */}
+      {isMobileDevice && (
+        <style>{`
+          head::after {
+            content: url(/apple-touch-icon.png);
+            display: none;
+          }
+        `}</style>
       )}
     </Head>
   );
