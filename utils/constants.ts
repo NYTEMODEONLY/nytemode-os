@@ -211,7 +211,7 @@ export const SYSTEM_FILES = new Set([
   "folder.jpg",
   "$RECYCLE.BIN",
   "System Volume Information",
-  "Refresh.url"
+  "Refresh.url",
 ]);
 
 export const SYSTEM_PATHS = new Set(["/.deletedFiles.log"]);
@@ -377,7 +377,8 @@ export const PACKAGE_DATA = {
     name: "NYTEMODEONLY",
     url: "https://github.com/NYTEMODEONLY",
   },
-  description: "NYTEMODE OS - A personalized desktop environment in your browser",
+  description:
+    "NYTEMODE OS - A personalized desktop environment in your browser",
   license: "MIT",
   version: "1.0.0",
 };

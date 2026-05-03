@@ -25,16 +25,14 @@ Workspace-level guidance for any future Claude session working in this repo. Kee
 
 ## Tech stack & runtime
 
-| Concern         | Choice                                                                                                                                |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------- | --- | ------- | --- | ---------- |
-| Framework       | Next.js 15 (`output: "export"`, static export)                                                                                        |
-| UI              | React 19 + styled-components 6, framer-motion                                                                                         |
-| Language        | TypeScript 5.8 (build-time TS errors are tolerated — `ignoreBuildErrors: true`)                                                       |
-| Filesystem      | BrowserFS over IndexedDB (Unix-style paths under `/Users/Public`)                                                                     |
-| Package manager | **npm** (the lockfile of record is `package-lock.json`; `yarn.lock` and `.yarnrc.yml` linger from upstream but are not authoritative) |
-| Node            | `.nvmrc` pins **22.0.0**. `package.json` engines accept `^18.18.0                                                                     |     | ^19.8.0 |     | >= 20.0.0` |
-| Deploy          | Vercel, framework=`nextjs`, `installCommand: npm install --legacy-peer-deps`                                                          |
-| Tests           | Jest (unit) + Playwright (e2e)                                                                                                        |
+- **Framework:** Next.js 15 (`output: "export"`, static export)
+- **UI:** React 19 + styled-components 6, framer-motion
+- **Language:** TypeScript 5.8 (build-time TS errors are tolerated — `ignoreBuildErrors: true`)
+- **Filesystem:** BrowserFS over IndexedDB (Unix-style paths under `/Users/Public`)
+- **Package manager:** **npm** (`package-lock.json` is authoritative; `yarn.lock` and `.yarnrc.yml` linger from upstream but are not used)
+- **Node:** `.nvmrc` pins **22.0.0**; `package.json` engines accept `^18.18.0 || ^19.8.0 || >= 20.0.0`
+- **Deploy:** Vercel, framework `nextjs`, `installCommand: npm install --legacy-peer-deps`
+- **Tests:** Jest (unit) + Playwright (e2e)
 
 ---
 

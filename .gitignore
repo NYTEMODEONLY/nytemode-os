@@ -9,6 +9,13 @@ test-results
 playwright-report
 playwright/.cache
 
+# macOS clutter
+.DS_Store
+**/.DS_Store
+
+# scratch / one-off conversion tooling
+tmp_conversion/
+
 public/robots.txt
 public/rss.xml
 public/sitemap.xml
@@ -17,9 +24,7 @@ public/Users/Public/**
 
 !public/Users/**/desktop.ini
 !public/Users/Public/Desktop
-!public/Users/Public/Desktop/My PC.url
-!public/Users/Public/Desktop/Public.url
-!public/Users/Public/Desktop/NYTEMODE.url
+!public/Users/Public/Desktop/*.url
 !public/.index/desktopIcons.json
 !public/Users/Public/Documents
 !public/Users/Public/Music
