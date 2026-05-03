@@ -7,3 +7,4 @@ public
 scripts
 test-results
 *.config.js
+next-env.d.ts

@@ -111,6 +111,8 @@ If you're rebasing onto upstream, expect conflicts in `utils/constants.ts`, `pag
 - **BrowserFS persists in IndexedDB.** Test changes to `public/Users/Public/...` in an incognito window or after clearing site storage; otherwise the user's saved state shadows the new defaults.
 - **Mobile/iOS favicon is fragile.** The original WebP-as-ICO bug taught us iOS Safari is picky. If you touch favicons, validate on real iOS, not just Chrome DevTools.
 - **Vercel CLI defaults look wrong.** `vercel ls` shows deployment URLs like `nytemode-*-violetmyst.vercel.app` because the underlying Vercel project name is `nytemode`, not `nytemode-os`. The custom domain `os.nytemode.com` is what users see — don't get spooked by the project naming mismatch.
+- **Vercel rejects CVE'd Next.js versions post-build.** Vercel runs a security gate AFTER `next build` succeeds. If the pinned `next` version has a published advisory, the deploy is marked Error with `Vulnerable version of Next.js detected, please update immediately` even though the build log shows `Build Completed`. Local `npm run build` will not catch this — only `vercel ls` will. Bump to the latest backport stable on the major you're on (currently `^15.5.15` for the Next 15 line). The skill `vercel-nextjs-vulnerable-version-block` documents the full recipe.
+- **Never claim Vercel-readiness from a local build alone.** Always check the actual deploy status with `vercel ls` after pushing.
 - **`out/` and `.next/` are committed/ignored inconsistently across history.** When in doubt, never `git add` build output.
 
 ---
