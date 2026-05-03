@@ -39,10 +39,10 @@ URL=https://your-app-url.com
 
 ```bash
 # After creating files, regenerate cache
-npm run build:prebuild
+yarn build:prebuild
 
 # Test in development
-npm run dev
+yarn dev
 ```
 
 ## ✅ Verification Steps
@@ -62,7 +62,7 @@ npm run dev
    ```
 
 3. **Visual test**:
-   - Start dev server: `npm run dev`
+   - Start dev server: `yarn dev`
    - Open http://localhost:3000
    - Verify icon appears on desktop
    - Click to test functionality
@@ -131,14 +131,14 @@ URL=https://codeeditor.dev
 1. Check filename has no spaces
 2. Verify icon file exists at specified path
 3. Ensure .url file follows exact template format
-4. Regenerate cache: `npm run build:prebuild`
+4. Regenerate cache: `yarn build:prebuild`
 5. Clear browser cache and reload
 
 ### Cache Issues
 
 ```bash
 # Force regenerate all cache files
-npm run build:prebuild
+yarn build:prebuild
 
 # Check if file was processed
 ls -la public/.index/
@@ -180,5 +180,5 @@ ls -la public/.index/
 ---
 
 **Template Version**: 1.0
-**Last Updated**: 2026-05-03 (re-verified during dormancy revisit)
+**Last Updated**: 2026-05-03 (post upstream sync; switched commands from `npm run` to `yarn`)
 **Compatibility**: NYTEMODE OS — current `main`. The recipe still matches the actual scripts in `scripts/cacheShortcuts.js` and `scripts/preloadIcons.js`.

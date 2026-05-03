@@ -16,10 +16,11 @@ Workspace-level guidance for any future Claude session working in this repo. Kee
 
 ### Fork relationship at a glance
 
-- Last common ancestor with upstream: **`f77cdc8b` "Pkg upgrades"** (2025-03-18).
-- Ahead of upstream: ~39 NYTEMODE-specific commits (branding, custom icons, mobile favicon work, taskbar color tweaks, default Matrix wallpaper recoloring).
-- Behind upstream: ~131 commits as of 2026-05-03. Upstream is highly active; expect non-trivial conflicts when syncing.
-- Last production deploy: ~238 days ago (mid-Sept 2025). The project has been dormant and is now being revisited.
+- **In sync with upstream as of 2026-05-03** (merge commit `a86d7f03`).
+- Last common ancestor: `61db23f0` "Add old personal site to browser links when available" (2026-04-28) — re-check before next sync.
+- Ahead of upstream: 43 NYTEMODE-specific commits (branding, custom icons, mobile favicon work, taskbar color tweaks, Matrix wallpaper recoloring, curated wallpaper list, Next.js 15.5.15 backport bump, doc additions, the merge commit itself).
+- Behind upstream: 0 (just synced — re-fetch with `git fetch upstream main` to see what's new).
+- Last production deploy: 2026-05-03 (the merge), Status `Ready` on Vercel. Project is active again; custom feature work is next.
 
 ---
 
@@ -129,11 +130,12 @@ If you're rebasing onto upstream, expect conflicts in `utils/constants.ts`, `pag
 
 ## Working style for this repo
 
-- The project went dormant for ~7 months before this revisit. Start by re-grounding: `git status`, `git log --oneline -20`, and skim `CURRENT_TASKS.md` before assuming anything about state.
-- Before any non-trivial change, sanity-check whether the same code exists upstream — we're a fork, and there's a real chance upstream has already solved (or broken) what you're about to touch.
+- The project was dormant Sept 2025 → May 2026, then re-onboarded on 2026-05-03 with a full upstream sync. Start any session by re-grounding: `git status`, `git log --oneline -10`, skim `CURRENT_TASKS.md`.
+- Before any non-trivial change, sanity-check whether the same code exists upstream — we're a fork, and there's a real chance upstream has already solved (or broken) what you're about to touch. `git fetch upstream main && git log main..upstream/main --oneline` shows what they've shipped since our last sync.
 - The user prefers quality over speed (see global `~/.claude/CLAUDE.md`). For non-trivial work, briefly state the approach before implementing so they can course-correct early.
 - Don't claim a UI/feature works without actually loading it in a browser. Type-check passing ≠ feature works.
+- Don't claim a Vercel deploy is fine from a local build alone — always verify with `vercel ls` after pushing. (See `feedback_verify_deploys.md` in workspace memory.)
 
 ---
 
-_Last verified: 2026-05-03. If this file feels out of sync with reality, update it._
+_Last verified: 2026-05-03 (post upstream sync, post Vercel auto-deploy verification). If this file feels out of sync with reality, update it._

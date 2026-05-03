@@ -16,6 +16,10 @@ playwright/.cache
 # scratch / one-off conversion tooling
 tmp_conversion/
 
+# Claude Code local/runtime state (project-level settings.json + commands/ are OK to commit if added)
+.claude/scheduled_tasks.lock
+.claude/settings.local.json
+
 public/private
 public/robots.txt
 public/rss.xml

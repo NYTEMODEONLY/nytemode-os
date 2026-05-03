@@ -12,12 +12,13 @@
 - **Deployment:** Vercel (`violetmyst/nytemode-os` project, static export, custom domain `os.nytemode.com`, `installCommand: NODE_OPTIONS=--openssl-legacy-provider yarn install`)
 - **Maintainer:** NYTEMODEONLY
 
-### Fork status (as of 2026-05-03)
+### Fork status (as of 2026-05-03 — post upstream sync)
 
-- Last common ancestor with upstream: `f77cdc8b` "Pkg upgrades" (2025-03-18).
-- Ahead of upstream: ~39 NYTEMODE customization commits.
-- Behind upstream: ~131 commits — upstream is highly active. Plan a real sync, not a fast-forward.
-- Last production deployment: ~mid-September 2025. Project paused for ~7 months and is now being revisited.
+- **In sync with upstream.** Merge commit `a86d7f03` brought in 131 upstream commits (range `f77cdc8b..61db23f0`).
+- Last common ancestor: `61db23f0` "Add old personal site to browser links when available" (2026-04-28).
+- Ahead of upstream: 43 NYTEMODE-specific commits.
+- Behind upstream: 0. Re-fetch with `git fetch upstream main` to see what's accumulated since.
+- Last production deployment: 2026-05-03, Status `Ready` on Vercel. Project is active again.
 
 ---
 
@@ -461,6 +462,6 @@ Accept upstream changes everywhere else by default.
 
 ---
 
-**Last Updated**: 2026-05-03
-**Project Status**: Returning from dormancy — re-onboarding (see `CURRENT_TASKS.md`)
+**Last Updated**: 2026-05-03 (post upstream sync)
+**Project Status**: Active — synced with upstream, ready for custom feature work (see `CURRENT_TASKS.md`)
 **Maintainer**: NYTEMODEONLY
