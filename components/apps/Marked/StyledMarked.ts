@@ -11,10 +11,10 @@ const StyledMarked = styled.div`
     font-size: 16px;
     height: 100%;
     line-height: 1.5;
+    overflow-wrap: break-word;
     overflow-y: auto;
     padding: 16px 32px;
     width: 100%;
-    word-wrap: break-word;
 
     * {
       all: revert;
@@ -130,7 +130,7 @@ const StyledMarked = styled.div`
     }
 
     code:not([class]) {
-      background-color: rgba(27, 31, 35, 5%);
+      background-color: rgb(27 31 35 / 5%);
       border-radius: 3px;
       font-size: 85%;
       margin: 0;

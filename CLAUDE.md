@@ -29,9 +29,9 @@ Workspace-level guidance for any future Claude session working in this repo. Kee
 - **UI:** React 19 + styled-components 6, framer-motion
 - **Language:** TypeScript 5.8 (build-time TS errors are tolerated — `ignoreBuildErrors: true`)
 - **Filesystem:** BrowserFS over IndexedDB (Unix-style paths under `/Users/Public`)
-- **Package manager:** **npm** (`package-lock.json` is authoritative; `yarn.lock` and `.yarnrc.yml` linger from upstream but are not used)
-- **Node:** `.nvmrc` pins **22.0.0**; `package.json` engines accept `^18.18.0 || ^19.8.0 || >= 20.0.0`
-- **Deploy:** Vercel, framework `nextjs`, `installCommand: npm install --legacy-peer-deps`
+- **Package manager:** **yarn** for install (`yarn.lock` is authoritative). Upstream uses yarn and pulls in a git dep (`Burn-My-Windows`) that npm can't clone cleanly. Scripts still run interchangeably (`yarn build` ≡ `npm run build`); only install differs.
+- **Node:** `.nvmrc` pins **22.0.0**; install requires `NODE_OPTIONS=--openssl-legacy-provider` because browserfs's postinstall step uses webpack 4 (which is incompatible with newer OpenSSL defaults).
+- **Deploy:** Vercel, framework `nextjs`, `installCommand: NODE_OPTIONS=--openssl-legacy-provider yarn install`
 - **Tests:** Jest (unit) + Playwright (e2e)
 
 ---
@@ -39,28 +39,28 @@ Workspace-level guidance for any future Claude session working in this repo. Kee
 ## Commands you'll actually use
 
 ```bash
-# install (legacy-peer-deps is non-negotiable — peer-dep graph is not clean)
-npm install --legacy-peer-deps
+# install (yarn + openssl flag are both required — see "Tech stack" notes above)
+NODE_OPTIONS=--openssl-legacy-provider yarn install
 
 # dev server
-npm run dev                 # http://localhost:3000
+yarn dev                                # http://localhost:3000
 
 # regenerate generated assets after touching public/, icons, or shortcuts
-npm run build:prebuild      # robots, RSS, search index, icon cache, shortcut cache, fs.9p.json
+yarn build:prebuild                     # robots, RSS, search index, icon cache, shortcut cache, fs.9p.json
 
 # full production build (runs prebuild + next build)
-npm run build
+yarn build
 
 # preview locally
-npm run serve               # serves ./out
+yarn serve                              # serves ./out
 
 # Vercel deploy (already authed)
-vercel deploy               # preview URL
-vercel --prod               # production at os.nytemode.com
+vercel deploy                           # preview URL
+vercel --prod                           # production at os.nytemode.com
 
 # tests
-npm test                    # jest
-npm run e2e                 # playwright
+yarn test                               # jest
+yarn e2e                                # playwright
 ```
 
 The `build:prebuild` step is **mandatory** any time you add/rename/move files under `public/` (especially desktop shortcuts and icons). It rebuilds:
@@ -106,7 +106,7 @@ If you're rebasing onto upstream, expect conflicts in `utils/constants.ts`, `pag
 
 - **Static export only.** `next.config.js` sets `output: "export"`. No SSR / no Next.js API routes / no middleware will work in production. Anything dynamic must run client-side or via a separate service.
 - **Build allows TS errors.** `typescript.ignoreBuildErrors: true` and `eslint.ignoreDuringBuilds: true`. A green Vercel build does not mean the code is type-clean. Run `npm run eslint` and `tsc --noEmit` (via VS Code or manually) when verifying real correctness.
-- **`legacy-peer-deps` is required.** Without it, `npm install` will fail on the React 19 / various-libs-pinned-to-React-18 conflict.
+- **`Burn-My-Windows` git dep needs yarn.** Upstream added `Burn-My-Windows` as a git URL with no root `package.json`. yarn handles this; npm bails out with `ENOENT`. Don't try to switch back to npm install without first vendoring those shaders or removing the dep.
 - **Heavy bundle (~10MB initial).** Don't introduce additional megabyte-class dependencies casually.
 - **BrowserFS persists in IndexedDB.** Test changes to `public/Users/Public/...` in an incognito window or after clearing site storage; otherwise the user's saved state shadows the new defaults.
 - **Mobile/iOS favicon is fragile.** The original WebP-as-ICO bug taught us iOS Safari is picky. If you touch favicons, validate on real iOS, not just Chrome DevTools.

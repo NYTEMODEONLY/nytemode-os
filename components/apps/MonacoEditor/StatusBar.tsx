@@ -1,5 +1,5 @@
 import { basename, dirname } from "path";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import {
   ErrorIcon,
   InfoIcon,
@@ -21,6 +21,7 @@ import { useFileSystem } from "contexts/fileSystem";
 import { useProcesses } from "contexts/process";
 import Button from "styles/common/Button";
 import { haltEvent, label } from "utils/functions";
+import { MILLISECONDS_IN_SECOND } from "utils/constants";
 
 type NotificationType = "error" | "warning" | "info";
 
@@ -52,7 +53,7 @@ const StatusBar: FC<ComponentProcessProps> = ({ id }) => {
         setNotifications((currentNotifications) =>
           currentNotifications.slice(1)
         );
-      }, 10000);
+      }, MILLISECONDS_IN_SECOND * 10);
     }
   }, [notifications]);
 
@@ -187,4 +188,4 @@ const StatusBar: FC<ComponentProcessProps> = ({ id }) => {
   );
 };
 
-export default StatusBar;
+export default memo(StatusBar);

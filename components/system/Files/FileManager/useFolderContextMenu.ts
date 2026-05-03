@@ -18,6 +18,7 @@ import { useProcesses } from "contexts/process";
 import { useSession } from "contexts/session";
 import { useProcessesRef } from "hooks/useProcessesRef";
 import { useWebGPUCheck } from "hooks/useWebGPUCheck";
+import { CLOSE_EFFECT_NAMES } from "utils/closeEffect";
 import {
   DESKTOP_PATH,
   FOLDER_ICON,
@@ -38,11 +39,12 @@ import {
 } from "utils/functions";
 import { getMountUrl, isMountedFolder } from "contexts/fileSystem/core";
 
-const stopGlobalMusicVisualization = (): void =>
+const stopGlobalMusicVisualization = (): void => {
   window.WebampGlobal?.store.dispatch({
     enabled: false,
     type: "SET_MILKDROP_DESKTOP",
   });
+};
 
 const NEW_FOLDER = "New folder";
 const NEW_TEXT_DOCUMENT = "New Text Document.txt";
@@ -55,12 +57,9 @@ const updateSortBy =
     sortBy === value ? !isAscending : defaultIsAscending,
   ];
 
-const EASTER_EGG_CLICK_COUNT = 2;
 const CAPTURE_FPS = 30;
 const MIME_TYPE_VIDEO_WEBM = "video/webm";
 const MIME_TYPE_VIDEO_MP4 = "video/mp4";
-
-let triggerEasterEggCountdown = EASTER_EGG_CLICK_COUNT;
 
 let currentMediaStream: MediaStream | undefined;
 let currentMediaRecorder: MediaRecorder | undefined;
@@ -87,7 +86,9 @@ const useFolderContextMenu = (
     updateFolder,
   } = useFileSystem();
   const {
+    closeEffect,
     iconPositions,
+    setCloseEffect,
     setForegroundId,
     setWallpaper: setSessionWallpaper,
     setIconPositions,
@@ -95,26 +96,6 @@ const useFolderContextMenu = (
     updateRecentFiles,
     wallpaperImage,
   } = useSession();
-  const setWallpaper = useCallback(
-    (wallpaper: string) => {
-      if (wallpaper === "VANTA") {
-        triggerEasterEggCountdown -= 1;
-
-        const triggerEasterEgg = triggerEasterEggCountdown === 0;
-
-        setSessionWallpaper(`VANTA${triggerEasterEgg ? " WIREFRAME" : ""}`);
-
-        if (triggerEasterEgg) {
-          triggerEasterEggCountdown = EASTER_EGG_CLICK_COUNT;
-        }
-      } else {
-        triggerEasterEggCountdown = EASTER_EGG_CLICK_COUNT;
-
-        setSessionWallpaper(wallpaper);
-      }
-    },
-    [setSessionWallpaper]
-  );
   const { minimize, open } = useProcesses();
   const updateSorting = useCallback(
     (value: SortBy | "", defaultIsAscending: boolean): void => {
@@ -459,19 +440,27 @@ const useFolderContextMenu = (
                     ({ requiresWebGPU, disabled }) =>
                       !requiresWebGPU && !disabled
                   ).reduce<MenuItem[]>(
-                    (menu, item) => [
+                    (menu, { hasAlt = true, id, name }) => [
                       ...menu,
                       {
                         action: () => {
                           if (isMusicVisualizationRunning) {
-                            stopGlobalMusicVisualization?.();
+                            stopGlobalMusicVisualization();
                           }
-                          setWallpaper(item.id);
+                          setSessionWallpaper(
+                            `${id}${
+                              hasAlt &&
+                              wallpaperImage.startsWith(id) &&
+                              !wallpaperImage.endsWith(" ALT")
+                                ? " ALT"
+                                : ""
+                            }`
+                          );
                         },
-                        label: item.name || item.id,
-                        toggle: item.startsWith
-                          ? wallpaperImage.startsWith(item.id)
-                          : wallpaperImage === item.id,
+                        label: name || id,
+                        toggle: hasAlt
+                          ? wallpaperImage.startsWith(id)
+                          : wallpaperImage === id,
                       },
                     ],
                     isMusicVisualizationRunning
@@ -485,6 +474,14 @@ const useFolderContextMenu = (
                         ]
                       : []
                   ),
+                },
+                {
+                  label: "Window close effect",
+                  menu: CLOSE_EFFECT_NAMES.map((effectName) => ({
+                    action: () => setCloseEffect(effectName),
+                    label: effectName,
+                    toggle: closeEffect === effectName,
+                  })),
                 },
                 ...(canCapture
                   ? [
@@ -594,6 +591,7 @@ const useFolderContextMenu = (
       addToFolder,
       canCapture,
       captureScreen,
+      closeEffect,
       contextMenu,
       exists,
       hasWebGPU,
@@ -609,8 +607,9 @@ const useFolderContextMenu = (
       pasteToFolder,
       processesRef,
       rootFs?.mntMap,
+      setCloseEffect,
       setForegroundId,
-      setWallpaper,
+      setSessionWallpaper,
       sortBy,
       updateDesktopIconPositions,
       updateFolder,

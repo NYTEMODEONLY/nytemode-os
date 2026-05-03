@@ -9,7 +9,7 @@
 - **Repository (origin):** https://github.com/NYTEMODEONLY/nytemode-os
 - **Upstream:** Fork of [DustinBrett/daedalOS](https://github.com/DustinBrett/daedalOS) — `git remote add upstream https://github.com/DustinBrett/daedalOS.git`
 - **Tech stack:** Next.js 15, React 19, TypeScript 5.8, styled-components 6, BrowserFS over IndexedDB
-- **Deployment:** Vercel (`violetmyst/nytemode-os` project, static export, custom domain `os.nytemode.com`)
+- **Deployment:** Vercel (`violetmyst/nytemode-os` project, static export, custom domain `os.nytemode.com`, `installCommand: NODE_OPTIONS=--openssl-legacy-provider yarn install`)
 - **Maintainer:** NYTEMODEONLY
 
 ### Fork status (as of 2026-05-03)
@@ -107,17 +107,17 @@ public/            # Static assets and file system
 
 ### Scripts Understanding
 
-- `npm install --legacy-peer-deps` — required; React 19 + several React-18-pinned libs collide otherwise
-- `npm run build:prebuild` — generates essential files (icons, search index, RSS, robots, shortcut cache, fs.9p.json)
-- `npm run build` — runs prebuild then the static `next build`
-- `npm run dev` — Next.js dev server (http://localhost:3000)
-- `npm run serve` — serves the built `out/` directory
-- `npm run e2e` — Playwright e2e suite
-- `npm test` — Jest unit tests
+- `NODE_OPTIONS=--openssl-legacy-provider yarn install` — required; browserfs's postinstall webpack-4 build fails on Node ≥ 17 without the legacy OpenSSL provider, and upstream's `Burn-My-Windows` git dep cannot be installed by npm
+- `yarn build:prebuild` — generates essential files (icons, search index, RSS, robots, shortcut cache, fs.9p.json)
+- `yarn build` — runs prebuild then the static `next build`
+- `yarn dev` — Next.js dev server (http://localhost:3000)
+- `yarn serve` — serves the built `out/` directory
+- `yarn e2e` — Playwright e2e suite
+- `yarn test` — Jest unit tests
 - `vercel deploy` — preview deployment
 - `vercel --prod` — production deployment
 
-> Package manager: **npm** (`package-lock.json` is authoritative). `yarn.lock` and `.yarnrc.yml` linger from upstream but are not used by Vercel or our local workflow.
+> Package manager: **yarn** for install (`yarn.lock` is authoritative). Scripts are interchangeable between `yarn run X` and `npm run X` since both invoke the same `package.json#scripts` entries; only the install side differs.
 
 ### Pre-build Scripts (run in order by `build:prebuild`)
 
@@ -133,7 +133,7 @@ Re-run `npm run build:prebuild` whenever you add/rename/move anything under `pub
 ### Build Configuration
 
 - **Output:** Static export (`output: "export"` in `next.config.js`)
-- **Deployment:** Vercel with `framework: "nextjs"`, `outputDirectory: ".next"`, `installCommand: "npm install --legacy-peer-deps"`, `buildCommand: "npm run build"` (see `vercel.json`)
+- **Deployment:** Vercel with `framework: "nextjs"`, `outputDirectory: ".next"`, `installCommand: "NODE_OPTIONS=--openssl-legacy-provider yarn install"`, `buildCommand: "yarn build"` (see `vercel.json`)
 - **Type checking:** `typescript.ignoreBuildErrors: true` and `eslint.ignoreDuringBuilds: true` — a green build does **not** prove type/lint cleanliness. Verify separately when correctness matters.
 
 ---

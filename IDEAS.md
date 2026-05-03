@@ -4,28 +4,23 @@
 
 ### High Priority
 
+- 3rd Party App Support
 - Accessibility (Structure & Markup)
+- Add my old personal website
+  - [http://surf.to/misc](https://web.archive.org/web/20050826192118if_/http://surf.to:80/misc)
 - Screen Savers (.scr)
-  - [Pipes](https://github.com/1j01/pipes)
-  - [3D Maze](https://github.com/ibid-11962/Windows-95-3D-Maze-Screensaver)
-  - [3D FlowerBox](https://github.com/kevin-shannon/3D-FlowerBox)
   - [After Dark](https://www.bryanbraun.com/after-dark-css/)
-  - [Hackers](https://simone.computer/#/webdesktops) (Shows when site is inactive)
   - [Bouncing DVD Logo](https://www.bouncingdvdlogo.com/)
   - [Drift](https://github.com/sandydoo/flux)
   - [Mystify](https://codepen.io/chrissimmons/pen/rWNJRp)
   - [Johnny Castaway](https://github.com/xesf/castaway)
-- Add my old personal website
-  - [http://surf.to/misc](https://web.archive.org/web/20050826192118if_/http://surf.to:80/misc)
 - Progressive Web App
   - Offline
     - [next-offline](https://github.com/hanford/next-offline)
   - Service Worker (Firewall)
     - [Mock Service Worker](https://github.com/mswjs/msw)
-- System Tray Icons
 - Light Windows 10 Theme
   - [prefers-color-scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme)
-- Single Click Window Icon Opens Context Menu
 
 ### Medium Priority
 
@@ -33,12 +28,14 @@
 - Virtual Assistant
   - [ClippyJS](https://github.com/pi0/clippyjs)
   - AI Powered
+    - [wllama](https://github.com/ngxson/wllama)
     - [Whisper WASM](https://github.com/ggerganov/whisper.cpp/tree/master/examples/talk.wasm)
     - TTS
       - [Coqui.ai](https://github.com/coqui-ai/tts)
       - speak.js ([1](https://github.com/kripken/speak.js), [2](https://github.com/mtttmpl/speak-js))
     - [Transformers.js](https://xenova.github.io/transformers.js/)
-- 3rd Party App Support
+- System Tray Icons
+- Crypto Wallet Explorer ([MainNet](https://mainnet.base.org))
 - Email App
   - Open SMTP Server
   - [openpgpjs](https://github.com/openpgpjs/openpgpjs)
@@ -191,7 +188,9 @@
 ### Document/Book Viewer
 
 - [WebODF](https://webodf.org/)
-- [docx2html](https://github.com/lalalic/docx2html)
+- DOCX
+  - [docx2html](https://github.com/lalalic/docx2html)
+  - [docx](https://github.com/dolanmiu/docx)
 - [Pandoc](https://github.com/tweag/pandoc-wasm)
 - [gdal3.js](https://github.com/bugra9/gdal3.js)
 - [Epub.js](https://github.com/futurepress/epub.js/)
@@ -269,8 +268,6 @@
 ## Visuals & Effects
 
 - [Frosted Glass](https://frosted-glass.shud.in/)
-- Window Animations
-  - [Burn My Windows](https://github.com/Schneegans/Burn-My-Windows) ([#358](https://github.com/Schneegans/Burn-My-Windows/discussions/358))
 - 3D
   - [noclip](https://noclip.website/)
   - [Object Viewer](https://rubenandrebarreiro.github.io/projects/threejs/3d-object-viewer-super-mario-bros/3d-object-viewer-super-mario-bros.html)
@@ -284,12 +281,13 @@
   - [Paper Clouds](https://www.shadertoy.com/view/WtjGRc)
   - [Descent](https://www.shadertoy.com/view/wdfGW4)
   - [Glassy Field](https://www.shadertoy.com/view/4ttGDH)
-- Art Wallpapers
-  - [MMoA](https://metmuseum.github.io/)
-  - [AIoC](https://api.artic.edu/docs/)
 - [spacekit](https://github.com/typpo/spacekit)
+- [ASCII Clouds](https://caidan.dev/portfolio/ascii_clouds/)
+- [twigl](https://github.com/doxas/twigl)
 - [UVCanvas](https://github.com/latentcat/uvcanvas)
 - [Google Easter Eggs](https://elgoog.im/)
+- [Aurelia](https://github.com/holtsetio/aurelia/)
+- [Galaxy Simulation](https://threejsroadmap.com/blog/galaxy-simulation-webgpu-compute-shaders)
 - [Shan, Shui](https://github.com/LingDong-/shan-shui-inf) (Procedural Chinese Landscape)
 - [gpu-io](https://github.com/amandaghassaei/gpu-io) (Physics Simulations)
 - [Retro Synthwave](https://github.com/victorqribeiro/retroSynthwave)
@@ -319,7 +317,7 @@
   - [Xash3D-Emscripten](https://github.com/btarg/Xash3D-Emscripten)
 - Minesweeper ([1](https://github.com/ziebelje/minesweeper), [2](https://github.com/ShizukuIchi/minesweeper))
 - [S.U.R.F.](https://github.com/jackbuehner/MicrosoftEdge-S.U.R.F.)
-- Game of Life ([1](https://github.com/rustwasm/wasm_game_of_life), [2](https://github.com/skeeto/webgl-game-of-life/))
+- Game of Life ([1](https://github.com/copy/life), [2](https://github.com/rustwasm/wasm_game_of_life), [3](https://github.com/skeeto/webgl-game-of-life/))
 - Solitaire ([1](https://github.com/rjanjic/js-solitaire), [2](https://github.com/1j01/98/tree/master/programs/js-solitaire))
 - [Heroes of Might and Magic II](https://github.com/ihhub/fheroes2)
 - [Doom 3](https://wasm.continuation-labs.com/d3demo/)

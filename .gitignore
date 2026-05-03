@@ -16,6 +16,7 @@ playwright/.cache
 # scratch / one-off conversion tooling
 tmp_conversion/
 
+public/private
 public/robots.txt
 public/rss.xml
 public/sitemap.xml

@@ -26,8 +26,11 @@ This project is greatly augmented by code from the open source community. Thank 
 
 ## System Libraries
 
+- [3D FlowerBox](https://github.com/kevin-shannon/3D-FlowerBox)
+- [3D Maze](https://github.com/ibid-11962/Windows-95-3D-Maze-Screensaver)
 - [7z-wasm](https://github.com/use-strict/7z-wasm)
 - [ani-cursor](https://github.com/captbaritone/webamp/tree/master/packages/ani-cursor)
+- [Burn-My-Windows](https://github.com/Schneegans/Burn-My-Windows)
 - [Coastal Landscape](https://www.shadertoy.com/view/fstyD4)
 - [codecbox.js](https://github.com/duanyao/codecbox.js)
 - [decode-ico](https://github.com/LinusU/decode-ico)
@@ -51,6 +54,7 @@ This project is greatly augmented by code from the open source community. Thank 
 - [multiformats](https://github.com/multiformats/multiformats)
 - [music-metadata-browser](https://github.com/Borewit/music-metadata-browser)
 - [Panzoom](https://github.com/timmywil/panzoom)
+- [Pipes](https://github.com/1j01/pipes)
 - [playlist-parser](https://github.com/nickdesaulniers/javascript-playlist-parser)
 - [QOI Decoder](https://gist.github.com/nicolaslegland/f0577cb49b1e56b729a2c0fc0aa151ba)
 - [resedit](https://github.com/jet2jet/resedit-js)
@@ -99,6 +103,16 @@ This project is greatly augmented by code from the open source community. Thank 
 ## Services
 
 - [ntp.js](http://www.ntpjs.org/)
+- [allOrigins](https://allorigins.win/)
+- [Art Institute of Chicago](https://www.artic.edu/open-access/public-api)
 - [Astronomy Picture of the Day](https://apod.nasa.gov/apod/)
+- [Cloudflare DoH](https://developers.cloudflare.com/1.1.1.1/encryption/dns-over-https/make-api-requests/)
+- [Google DoH](https://developers.google.com/speed/public-dns/docs/doh)
+- [isomorphic-git Cors Proxy](https://github.com/isomorphic-git/cors-proxy)
+- [IPFS Public Gateways](https://ipfs.github.io/public-gateway-checker/)
+- [MMoA](https://metmuseum.github.io/)
 - [The Old Net](https://theoldnet.com/)
 - [Wayback Machine](https://web.archive.org/)
+- [Wasmer Registry](https://docs.wasmer.io/registry)
+- [Winamp Skin Museum](https://skins.webamp.org/)
+- [Weather Report](https://github.com/chubin/wttr.in)

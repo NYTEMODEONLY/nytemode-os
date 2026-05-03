@@ -8,6 +8,7 @@ import index from "public/.index/fs.9p.json";
 import {
   FS_HANDLES,
   MOUNTABLE_EXTENSIONS,
+  MOUNTABLE_FS_TYPES,
   ONE_TIME_PASSIVE_EVENT,
 } from "utils/constants";
 
@@ -21,7 +22,7 @@ type FS9PV3 = [
   number,
   FS9PV3[] | string,
 ];
-type FS9PV4 = [string, number, number, FS9PV4[] | string | undefined];
+export type FS9PV4 = [string, number, number, FS9PV4[] | undefined];
 type FS9P = {
   fsroot: FS9PV3[];
   size: number;
@@ -76,20 +77,20 @@ export const get9pModifiedTime = (path: string): number =>
 
 export const get9pSize = (path: string): number => get9pData(path, IDX_SIZE);
 
-const mapReduce9pArray = (
-  array: FS9PV4[],
-  mapper: (entry: FS9PV4) => BFSFS
-  // eslint-disable-next-line unicorn/no-array-callback-reference
-): BFSFS => array.map(mapper).reduce((a, b) => Object.assign(a, b), {});
+export const parseDirectory = (array: FS9PV4[]): BFSFS => {
+  const directory: BFSFS = {};
 
-// eslint-disable-next-line unicorn/no-unreadable-array-destructuring
-const parse9pEntry = ([name, , , pathOrArray]: FS9PV4): BFSFS => ({
-  [name]: Array.isArray(pathOrArray)
-    ? mapReduce9pArray(pathOrArray, parse9pEntry)
-    : FILE_ENTRY,
-});
+  // eslint-disable-next-line unicorn/no-unreadable-array-destructuring
+  for (const [name, , , pathOrArray] of array) {
+    directory[name] = Array.isArray(pathOrArray)
+      ? parseDirectory(pathOrArray)
+      : FILE_ENTRY;
+  }
 
-export const fs9pToBfs = (): BFSFS => mapReduce9pArray(fsroot, parse9pEntry);
+  return directory;
+};
+
+export const fs9pToBfs = (): BFSFS => parseDirectory(fsroot);
 
 const parse9pV4ToV3 = (fs9p: FS9PV4[], path = "/"): FS9PV3[] =>
   fs9p.map(([name, mtime, size, target]) => {
@@ -201,7 +202,7 @@ export const getFileSystemHandles = async (): Promise<FileSystemHandles> => {
 
 export const isMountedFolder = (mount?: Mount): boolean =>
   typeof mount === "object" &&
-  (mount.getName() === "FileSystemAccess" ||
+  (MOUNTABLE_FS_TYPES.has(mount.getName()) ||
     (mount as ExtendedEmscriptenFileSystem)._FS?.DB_STORE_NAME === "FILE_DATA");
 
 export const getMountUrl = (

@@ -1,6 +1,7 @@
 import { basename, dirname, extname, join } from "path";
 import { useTheme } from "styled-components";
 import {
+  memo,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -40,6 +41,7 @@ import useDoubleClick from "hooks/useDoubleClick";
 import Button from "styles/common/Button";
 import Icon from "styles/common/Icon";
 import {
+  EXTENSIONS_WITH_ICON,
   ICON_CACHE,
   ICON_CACHE_EXTENSION,
   ICON_PATH,
@@ -109,11 +111,10 @@ const truncateName = (
   name: string,
   fontSize: string,
   fontFamily: string,
-  maxWidth: number,
-  alwaysShowPossibleLines = false
+  maxWidth: number
 ): string => {
   const nonBreakingName = name.replace(/-/g, NON_BREAKING_HYPHEN);
-  const { lines } = getTextWrapData(
+  const { lines, truncatedText } = getTextWrapData(
     nonBreakingName,
     fontSize,
     fontFamily,
@@ -121,10 +122,7 @@ const truncateName = (
   );
 
   if (lines.length > 2) {
-    const text =
-      alwaysShowPossibleLines || name.includes(" ")
-        ? lines.slice(0, 2).join("")
-        : lines[0];
+    const text = name.includes(" ") ? truncatedText : lines[0];
 
     return `${text.slice(0, -3).trim()}...`;
   }
@@ -184,6 +182,7 @@ const FileEntry: FC<FileEntryProps> = ({
   const [showInFileManager, setShowInFileManager] = useState(false);
   const { formats, sizes } = useTheme();
   const listView = useMemo(() => view === "list", [view]);
+  const detailsView = useMemo(() => view === "details", [view]);
   const fileName = useMemo(() => basename(path), [path]);
   const urlExt = useMemo(
     () => (isDirectory ? "" : getExtension(url)),
@@ -232,10 +231,9 @@ const FileEntry: FC<FileEntryProps> = ({
         formats.systemFont,
         sizes.fileEntry[
           listView ? "maxListTextDisplayWidth" : "maxIconTextDisplayWidth"
-        ],
-        !isDesktop
+        ]
       ),
-    [formats.systemFont, isDesktop, listView, name, sizes.fileEntry]
+    [formats.systemFont, listView, name, sizes.fileEntry]
   );
   const iconRef = useRef<HTMLImageElement | null>(null);
   const isIconCached = useRef(false);
@@ -310,8 +308,8 @@ const FileEntry: FC<FileEntryProps> = ({
     urlExt,
   ]);
   const showColumn = useMemo(
-    () => isVisible && columns !== undefined && view === "details",
-    [columns, isVisible, view]
+    () => isVisible && columns !== undefined && detailsView,
+    [columns, detailsView, isVisible]
   );
   const columnWidth = useMemo(
     () =>
@@ -331,9 +329,29 @@ const FileEntry: FC<FileEntryProps> = ({
         .forEach(({ icon: image }) => image && preloadImage(image))
     );
   }, [path, readdir]);
+  const onMouseOverButton = useCallback(() => {
+    if (listView && isDirectory) preloadImages();
+    createTooltip().then(setTooltip);
+  }, [createTooltip, isDirectory, listView, preloadImages]);
+  const lockWidthStyle = useMemo(
+    () => ({ maxWidth: columnWidth, minWidth: columnWidth }),
+    [columnWidth]
+  );
+  const renameFile = useCallback(
+    (origPath: string, newName?: string) => {
+      fileActions.renameFile(origPath, newName);
+      setRenaming("");
+    },
+    [fileActions, setRenaming]
+  );
 
   useEffect(() => {
-    if (!isLoadingFileManager && isVisible && !isIconCached.current) {
+    if (
+      !isLoadingFileManager &&
+      isVisible &&
+      !isIconCached.current &&
+      (!detailsView || EXTENSIONS_WITH_ICON.has(urlExt))
+    ) {
       const updateIcon = async (): Promise<void> => {
         if (icon.startsWith("blob:") || icon.startsWith("data:")) {
           if (icon.startsWith("data:image/jpeg;base64,")) return;
@@ -489,10 +507,9 @@ const FileEntry: FC<FileEntryProps> = ({
       updateIcon();
     }
 
-    if (!isVisible && getIconAbortController.current) {
-      getIconAbortController.current.abort();
-    }
+    if (!isVisible) getIconAbortController.current?.abort();
   }, [
+    detailsView,
     exists,
     fs,
     getIcon,
@@ -569,10 +586,7 @@ const FileEntry: FC<FileEntryProps> = ({
       <Button
         ref={buttonRef}
         aria-label={name}
-        onMouseOverCapture={() => {
-          if (listView && isDirectory) preloadImages();
-          createTooltip().then(setTooltip);
-        }}
+        onMouseOverCapture={onMouseOverButton}
         title={tooltip}
         {...(listView && { ...LIST_VIEW_ANIMATION, as: motion.button })}
         {...useDoubleClick(doubleClickHandler, listView)}
@@ -598,11 +612,7 @@ const FileEntry: FC<FileEntryProps> = ({
             [listView]
           )}
           $renaming={renaming}
-          style={
-            showColumn
-              ? { maxWidth: columnWidth, minWidth: columnWidth }
-              : undefined
-          }
+          style={showColumn ? lockWidthStyle : undefined}
           {...(isHeading && {
             "aria-level": 1,
             role: "heading",
@@ -612,12 +622,12 @@ const FileEntry: FC<FileEntryProps> = ({
             ref={iconRef}
             $eager={loadIconImmediately}
             $moving={pasteList[path] === "move"}
-            alt={name}
+            alt=""
             src={icon}
             {...FileEntryIconSize[view]}
           />
           <SubIcons
-            alt={name}
+            alt=""
             icon={icon}
             isDesktop={isDesktop}
             showShortcutIcon={Boolean(hideShortcutIcon || stats.systemShortcut)}
@@ -629,10 +639,7 @@ const FileEntry: FC<FileEntryProps> = ({
               isDesktop={isDesktop}
               name={name}
               path={path}
-              renameFile={(origPath, newName) => {
-                fileActions.renameFile(origPath, newName);
-                setRenaming("");
-              }}
+              renameFile={renameFile}
               setRenaming={setRenaming}
               view={view}
             />
@@ -672,4 +679,4 @@ const FileEntry: FC<FileEntryProps> = ({
   );
 };
 
-export default FileEntry;
+export default memo(FileEntry);

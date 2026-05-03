@@ -18,7 +18,9 @@ import {
   ICON_RES_MAP,
   MAX_ICON_SIZE,
   MAX_RES_ICON_OVERRIDE,
+  MILLISECONDS_IN_SECOND,
   ONE_TIME_PASSIVE_EVENT,
+  PACKAGE_DATA,
   PREVENT_SCROLL,
   SHORTCUT_EXTENSION,
   SUPPORTED_ICON_SIZES,
@@ -28,7 +30,7 @@ import {
 } from "utils/constants";
 
 export const bufferToBlob = (buffer: Buffer, type?: string): Blob =>
-  new Blob([buffer], type ? { type } : undefined);
+  new Blob([buffer as BlobPart], type ? { type } : undefined);
 
 export const bufferToUrl = (buffer: Buffer, mimeType?: string): string =>
   mimeType === "image/svg+xml"
@@ -49,7 +51,7 @@ export const resizeImage = async (
     const timeoutHandle = setTimeout(() => {
       resolve(blob);
       worker.terminate();
-    }, RESIZE_IMAGE_TIMEOUT_SECONDS * 1000);
+    }, RESIZE_IMAGE_TIMEOUT_SECONDS * MILLISECONDS_IN_SECOND);
     const canvas = document
       .createElement("canvas")
       .transferControlToOffscreen();
@@ -509,11 +511,17 @@ export const updateIconPositionsIfEmpty = (
     const entryUrl = join(url, entry);
 
     if (!iconPositions[entryUrl]) {
-      const gridEntry = [...gridElement.children].find((element) =>
-        element.querySelector(
-          `button[aria-label="${entry.replace(SHORTCUT_EXTENSION, "")}"]`
-        )
-      );
+      let gridEntry: Element | undefined;
+
+      try {
+        gridEntry = [...gridElement.children].find((element) =>
+          element.querySelector(
+            `button[aria-label="${CSS.escape(entry.replace(SHORTCUT_EXTENSION, ""))}"]`
+          )
+        );
+      } catch {
+        // Ignore error getting element
+      }
 
       if (gridEntry instanceof HTMLElement) {
         const { x, y, height, width } = gridEntry.getBoundingClientRect();
@@ -756,9 +764,7 @@ const formatNumber = (number: number, roundUpNumber = false): string => {
           minimumSignificantDigits: number < 1 ? 2 : 3,
         }
   ).format(
-    roundUpNumber
-      ? Math.ceil(Number(number))
-      : Number(number.toFixed(4).slice(0, -2))
+    roundUpNumber ? Math.ceil(number) : Number(number.toFixed(4).slice(0, -2))
   );
 
   if (roundUpNumber) return formattedNumber;
@@ -794,12 +800,23 @@ export const getFormattedSize = (size = 0, asKB = false): string => {
   return `${size} bytes`;
 };
 
-export const getTZOffsetISOString = (): string => {
-  const date = new Date();
+let timezoneOffset: number;
 
-  return new Date(
-    date.getTime() - date.getTimezoneOffset() * 60000
-  ).toISOString();
+export const getTZOffsetISOString = (timestamp?: number): string => {
+  let time = timestamp;
+  // eslint-disable-next-line no-undef-init
+  let date: Date | undefined = undefined;
+
+  if (!time) {
+    date = new Date();
+    time = date.getTime();
+  }
+
+  if (typeof timezoneOffset !== "number") {
+    timezoneOffset = (date || new Date()).getTimezoneOffset() * 60000;
+  }
+
+  return new Date(time - timezoneOffset).toISOString();
 };
 
 export const LOCAL_HOST = new Set(["127.0.0.1", "localhost"]);
@@ -868,7 +885,7 @@ export const haltEvent = (
     | React.MouseEvent
 ): void => {
   try {
-    if (event.cancelable) {
+    if (event?.cancelable) {
       event.preventDefault();
       event.stopPropagation();
     }
@@ -1009,9 +1026,11 @@ const supportsModulePreload = (): boolean => {
   if (HAS_MODULE_PRELOAD_SUPPORT) return true;
 
   try {
-    HAS_MODULE_PRELOAD_SUPPORT = Boolean(
-      document.createElement("link").relList?.supports?.("modulepreload")
-    );
+    const { relList } = document.createElement("link");
+
+    HAS_MODULE_PRELOAD_SUPPORT = relList
+      ? relList.supports("modulepreload")
+      : false;
   } catch {
     // Ignore failure to check for modulepreload support
   }
@@ -1135,16 +1154,17 @@ export const getGifJs = async (): Promise<GIFWithWorkers> => {
 
   return new GIFInstance({
     quality: 10,
-    workerScript: "Program Files/gif.js/gif.worker.js",
+    workerScript: "System/gif.js/gif.worker.js",
     workers: Math.max(Math.floor(navigator.hardwareConcurrency / 4), 1),
   }) as GIFWithWorkers;
 };
 
-export const jsonFetch = async (
-  url: string
-): Promise<Record<string, unknown>> => {
-  const response = await fetch(url, HIGH_PRIORITY_REQUEST);
-  const json = (await response.json()) as Record<string, unknown>;
+export const jsonFetch = async <T extends Record<string, unknown>>(
+  url: string,
+  options?: RequestInit
+): Promise<T> => {
+  const response = await fetch(url, { ...HIGH_PRIORITY_REQUEST, ...options });
+  const json = (await response.json()) as T;
 
   return json || {};
 };
@@ -1191,3 +1211,24 @@ export const shouldCaptureDragImage = (
   entryCount: number,
   isDesktop = false
 ): boolean => entryCount > 1 || (!isDesktop && entryCount === 1 && isSafari());
+
+export const maybeRequestIdleCallback = (
+  callback: () => void | Promise<void>
+): void => {
+  if (
+    "requestIdleCallback" in window &&
+    typeof window.requestIdleCallback === "function"
+  ) {
+    requestIdleCallback(callback);
+  } else {
+    setTimeout(callback, 0);
+  }
+};
+
+export const displayVersion = (): string => {
+  const { __NEXT_DATA__: { buildId } = {} } = window;
+
+  return `${PACKAGE_DATA.version}${buildId ? `-${buildId}` : ""}`;
+};
+
+export const isDev = (): boolean => "__nextDevClientId" in window;

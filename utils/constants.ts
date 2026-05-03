@@ -20,6 +20,8 @@ export const DEFAULT_ASCENDING = true;
 
 export const DEFAULT_CLOCK_SOURCE: ClockSource = "local";
 
+export const DEFAULT_CLOSE_EFFECT = "None";
+
 export const DEFAULT_THEME: ThemeName = "defaultTheme";
 
 export const DEFAULT_WALLPAPER = "MATRIX";
@@ -82,6 +84,7 @@ export const HEIF_IMAGE_FORMATS = new Set([
   ".heics",
   ".heif",
   ".heifs",
+  ".hif",
   ".avci",
   ".avcs",
 ]);
@@ -166,11 +169,15 @@ export const MILLISECONDS_IN_SECOND = 1000;
 
 export const MILLISECONDS_IN_MINUTE = 60000;
 
+export const MILLISECONDS_IN_HOUR = 3600000;
+
 export const MILLISECONDS_IN_DAY = 86400000;
 
 export const ZIP_EXTENSIONS = new Set([".jsdos", ".pk3", ".wsz", ".zip"]);
 
 export const MOUNTABLE_EXTENSIONS = new Set([".iso", ...ZIP_EXTENSIONS]);
+
+export const MOUNTABLE_FS_TYPES = new Set(["FileSystemAccess", "HTTPRequest"]);
 
 export const SPREADSHEET_FORMATS = [
   ".csv",
@@ -278,13 +285,14 @@ export const VIDEO_FILE_EXTENSIONS = new Set([
 
 export const DYNAMIC_PREFIX = ["nostr:"];
 
+export const EXTENSIONS_WITH_ICON = new Set([".ani", ".cur", ".exe", ".ico"]);
+
 export const DYNAMIC_EXTENSION = new Set([
   ...AUDIO_FILE_EXTENSIONS,
   ...AUDIO_PLAYLIST_EXTENSIONS,
   ...IMAGE_FILE_EXTENSIONS,
   ...TIFF_IMAGE_FORMATS,
   ...VIDEO_FILE_EXTENSIONS,
-  ".ani",
   ".exe",
   ".mp3",
   ".sav",
@@ -401,3 +409,5 @@ export const DISBALE_AUTO_INPUT_FEATURES = {
   autoCorrect: "off",
   spellCheck: false,
 };
+
+export const MAX_ZINDEX = 2147483647;

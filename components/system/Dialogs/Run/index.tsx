@@ -1,5 +1,5 @@
 import { basename, join } from "path";
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { memo, useCallback, useLayoutEffect, useRef, useState } from "react";
 import { parseCommand } from "components/apps/Terminal/functions";
 import { type ComponentProcessProps } from "components/system/Apps/RenderComponent";
 import StyledRun from "components/system/Dialogs/Run/StyledRun";
@@ -169,12 +169,15 @@ const Run: FC<ComponentProcessProps> = ({ id }) => {
               ([processName]) =>
                 processName.toLowerCase() ===
                 (
-                  resourceAliasMap[resourcePath.toLowerCase()] || resourcePath
+                  resourceAliasMap[resourcePid.toLowerCase()] || resourcePid
                 ).toLowerCase()
             ) || [];
 
         if (pid) {
-          open(pid);
+          open(
+            pid,
+            resourcePath === resourcePid ? undefined : { url: resourcePath }
+          );
           addRunHistoryEntry();
         } else if (utilCommandMap[resource.toLowerCase()]) {
           utilCommandMap[resource.toLowerCase()]();
@@ -315,4 +318,4 @@ const Run: FC<ComponentProcessProps> = ({ id }) => {
   );
 };
 
-export default Run;
+export default memo(Run);

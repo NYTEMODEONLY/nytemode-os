@@ -80,6 +80,7 @@
       "error",
       { "allowNumber": true }
     ],
+    "@typescript-eslint/triple-slash-reference": "off",
     "@typescript-eslint/use-unknown-in-catch-callback-variable": "off",
     "camelcase": "off",
     "class-methods-use-this": "off",
@@ -109,7 +110,7 @@
       }
     ],
     "jsx-a11y/no-autofocus": "off",
-    "no-console": ["error", { "allow": ["info", "error"] }],
+    "no-console": ["error", { "allow": ["info", "error", "time", "timeEnd"] }],
     "no-constant-binary-expression": "error",
     "no-implicit-coercion": "error",
     "no-new-wrappers": "error",
@@ -125,6 +126,7 @@
     "no-undef-init": "error",
     "no-underscore-dangle": "off",
     "no-unsafe-optional-chaining": "error",
+    "playwright/consistent-spacing-between-blocks": "off",
     "playwright/expect-expect": "off",
     "playwright/no-conditional-in-test": "off",
     "playwright/no-skipped-test": "off",

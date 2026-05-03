@@ -1,6 +1,6 @@
-import { basename, dirname, isAbsolute, join, extname } from "path";
-import { useEffect, useMemo, useRef, useState } from "react";
-import type { Stats } from "browserfs";
+import { basename, extname } from "path";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
+import type Stats from "browserfs/dist/node/core/node_fs_stats";
 import useResultsContextMenu from "components/system/Taskbar/Search/useResultsContextMenu";
 import {
   getModifiedTime,
@@ -210,4 +210,4 @@ const ResultEntry: FC<ResultEntryProps> = ({
   );
 };
 
-export default ResultEntry;
+export default memo(ResultEntry);

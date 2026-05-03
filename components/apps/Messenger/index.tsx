@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { type Event } from "nostr-tools";
 import { AnimatePresence } from "motion/react";
 import ChatLog from "components/apps/Messenger/ChatLog";
@@ -34,7 +34,7 @@ import {
 } from "components/apps/Messenger/hooks";
 import { type ComponentProcessProps } from "components/system/Apps/RenderComponent";
 import { useProcesses } from "contexts/process";
-import { MILLISECONDS_IN_DAY } from "utils/constants";
+import { MILLISECONDS_IN_DAY, MILLISECONDS_IN_SECOND } from "utils/constants";
 import { haltEvent } from "utils/functions";
 
 type NostrChatProps = {
@@ -192,7 +192,7 @@ const NostrChat: FC<NostrChatProps> = ({
 const Messenger: FC<ComponentProcessProps> = ({ id }) => {
   const [since, setSince] = useState(() => MILLISECONDS_IN_DAY);
   const timeSince = useMemo(
-    () => Math.floor((Date.now() - since) / 1000),
+    () => Math.floor((Date.now() - since) / MILLISECONDS_IN_SECOND),
     [since]
   );
   const [relayUrls, setRelayUrls] = useState<string[] | undefined>();
@@ -227,4 +227,4 @@ const Messenger: FC<ComponentProcessProps> = ({ id }) => {
   );
 };
 
-export default Messenger;
+export default memo(Messenger);

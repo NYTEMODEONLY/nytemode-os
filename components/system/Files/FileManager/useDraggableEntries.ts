@@ -173,8 +173,8 @@ const useDraggableEntries = (
           event.nativeEvent.dataTransfer?.setData(
             "DownloadURL",
             `${getMimeType(file) || "application/octet-stream"}:${file}:${
-              window.location.href
-            }${join(entryUrl, file)}`
+              window.location.origin
+            }${encodeURI(join(entryUrl, file))}`
           );
         }
 
@@ -224,6 +224,11 @@ const useDraggableEntries = (
           fileManagerRef.current?.addEventListener("dragover", onDragging, {
             passive: true,
           });
+        }
+
+        if (event.nativeEvent.dataTransfer) {
+          // eslint-disable-next-line no-param-reassign
+          event.nativeEvent.dataTransfer.effectAllowed = "move";
         }
       },
     [

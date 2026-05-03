@@ -64,6 +64,7 @@ import {
   filterMenuItems,
   focusOnWindow,
   loadApp,
+  mockSaveFilePicker,
   pageHasIcon,
   pageHasTitle,
   pressFileExplorerAddressBarKeys,
@@ -79,7 +80,7 @@ import { UNKNOWN_ICON } from "components/system/Files/FileManager/icons";
 
 test.beforeEach(captureConsoleLogs());
 test.beforeEach(disableWallpaper);
-test.beforeEach(async ({ page }) => loadApp({ page }, { app: "FileExplorer" }));
+test.beforeEach(async ({ page }) => loadApp({ app: "FileExplorer" })({ page }));
 test.beforeEach(windowsAreVisible);
 test.beforeEach(fileExplorerEntriesAreVisible);
 
@@ -146,6 +147,13 @@ test.describe("has files & folders", () => {
 
     test("can download", async ({ page }) => {
       const downloadPromise = page.waitForEvent("download");
+      const supportsSaveFilePicker = await page.evaluate(
+        () => typeof window.showSaveFilePicker === "function"
+      );
+
+      if (supportsSaveFilePicker) {
+        await mockSaveFilePicker({ page }, TEST_ROOT_FILE_TEXT);
+      }
 
       await clickContextMenuEntry(/^Download$/, { page });
 
@@ -265,14 +273,15 @@ test.describe("has files & folders", () => {
 
     await context.grantPermissions(["clipboard-write"]);
     await page.evaluate(
-      ([icon]) =>
+      async ([icon]) =>
         navigator.clipboard.write([
           new ClipboardItem({
-            "image/png": atob(icon.replace("data:image/png;base64,", "")),
+            "image/png": await (await fetch(icon)).blob(),
           }),
         ]),
       [UNKNOWN_ICON]
     );
+
     await fileExplorerEntryIsHidden(TEST_IMAGE_NAME, { page });
 
     await page.keyboard.press("Control+KeyV");

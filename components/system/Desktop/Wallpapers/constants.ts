@@ -52,7 +52,6 @@ export const WALLPAPER_MENU: WallpaperMenuItem[] = [
   {
     id: "VANTA",
     name: "Vanta Waves",
-    startsWith: true,
   },
 ];
 
@@ -63,3 +62,5 @@ export const BASE_VIDEO_SELECTOR = ":scope > video";
 export const STABLE_DIFFUSION_DELAY_IN_MIN = 10;
 
 export const PRELOAD_ID = "preloadWallpaper";
+
+export const MAX_RETRIES = 5;

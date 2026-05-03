@@ -52,6 +52,7 @@ import {
   getGifJs,
   getHtmlToImage,
   getMimeType,
+  getTZOffsetISOString,
   isSafari,
   isYouTubeUrl,
   resizeImage,
@@ -237,32 +238,33 @@ const getIconsFromCache = (fs: FSModule, path: string): Promise<string[]> =>
   new Promise((resolve) => {
     const iconCacheDirectory = join(ICON_CACHE, path);
 
-    fs?.readdir(
-      iconCacheDirectory,
-      async (dirError, [firstIcon, ...otherIcons] = []) => {
-        if (dirError) resolve([]);
-        else {
-          resolve(
-            (
-              await Promise.all(
-                [firstIcon, otherIcons[otherIcons.length - 1]]
-                  .filter((icon) => icon?.endsWith(ICON_CACHE_EXTENSION))
-                  .map(
-                    (cachedIcon): Promise<string> =>
-                      // eslint-disable-next-line promise/param-names
-                      new Promise((resolveIcon) => {
-                        getCachedIconUrl(
-                          fs,
-                          join(iconCacheDirectory, cachedIcon)
-                        ).then(resolveIcon);
-                      })
-                  )
-              )
-            ).filter(Boolean)
-          );
-        }
+    fs?.readdir(iconCacheDirectory, async (dirError, possibleIcons = []) => {
+      if (dirError) resolve([]);
+      else {
+        const [firstIcon, ...otherIcons] = possibleIcons.filter((icon) =>
+          icon?.endsWith(ICON_CACHE_EXTENSION)
+        );
+
+        resolve(
+          (
+            await Promise.all(
+              [firstIcon, otherIcons[otherIcons.length - 1]]
+                .filter(Boolean)
+                .map(
+                  (cachedIcon): Promise<string> =>
+                    // eslint-disable-next-line promise/param-names
+                    new Promise((resolveIcon) => {
+                      getCachedIconUrl(
+                        fs,
+                        join(iconCacheDirectory, cachedIcon)
+                      ).then(resolveIcon);
+                    })
+                )
+            )
+          ).filter(Boolean)
+        );
       }
-    );
+    });
   });
 
 export const getCoverArt = async (
@@ -815,6 +817,7 @@ export const filterSystemFiles =
 
 type WrapData = {
   lines: string[];
+  truncatedText: string;
   width: number;
 };
 
@@ -850,44 +853,53 @@ export const getTextWrapData = (
   text: string,
   fontSize: string,
   fontFamily: string,
-  maxWidth?: number
+  maxWidth: number
 ): WrapData => {
   const lines = [""];
-
   const totalWidth = measureText(text, fontSize, fontFamily);
+  let truncatedText = "";
 
-  if (!maxWidth) return { lines: [text], width: totalWidth };
-
-  if (totalWidth > maxWidth) {
-    const words = text.split(" ");
-
-    [...text].forEach((character) => {
-      const lineIndex = lines.length - 1;
-      const lineText = `${lines[lineIndex]}${character}`;
-      const lineWidth = measureText(lineText, fontSize, fontFamily);
-
-      if (lineWidth > maxWidth) {
-        const spacesInLine = lineText.split(" ").length - 1;
-        const lineWithWords = words.splice(0, spacesInLine).join(" ");
-
-        if (
-          lines.length === 1 &&
-          spacesInLine > 0 &&
-          lines[0] !== lineWithWords
-        ) {
-          lines[0] = lineText.slice(0, lineWithWords.length);
-          lines.push(lineText.slice(lineWithWords.length));
-        } else {
-          lines.push(character);
-        }
-      } else {
-        lines[lineIndex] = lineText;
-      }
-    });
+  if (totalWidth <= maxWidth) {
+    return { lines: [text], truncatedText: text, width: totalWidth };
   }
+
+  [...text].forEach((character, characterIndex) => {
+    const currentLineIndex = lines.length - 1;
+
+    if (currentLineIndex < 2) truncatedText += character;
+
+    const isEmptyLine =
+      lines[currentLineIndex] === "" || lines[currentLineIndex] === " ";
+    const isSpaceCharacter = character === " ";
+
+    if (isEmptyLine && isSpaceCharacter) {
+      lines[currentLineIndex] = "";
+      return;
+    }
+
+    const newLineText = `${lines[currentLineIndex]}${character}`;
+    const newLineWidth = measureText(newLineText, fontSize, fontFamily);
+
+    if (newLineWidth > maxWidth) {
+      if (currentLineIndex === 1) truncatedText = truncatedText.slice(0, -1);
+
+      if (text[characterIndex + 1] === " " || !newLineText.includes(" ")) {
+        lines.push(character);
+      } else {
+        const lastSpaceIndex = newLineText.lastIndexOf(" ");
+
+        lines[currentLineIndex] = newLineText.slice(0, lastSpaceIndex);
+
+        lines.push(newLineText.slice(lastSpaceIndex + 1));
+      }
+    } else {
+      lines[currentLineIndex] = newLineText;
+    }
+  });
 
   return {
     lines,
+    truncatedText,
     width: Math.min(maxWidth, totalWidth),
   };
 };
@@ -898,7 +910,7 @@ export const getDateModified = (
   format: Intl.DateTimeFormatOptions
 ): string => {
   const modifiedTime = getModifiedTime(path, fullStats);
-  const date = new Date(modifiedTime).toISOString().slice(0, 10);
+  const date = getTZOffsetISOString(modifiedTime).slice(0, 10);
   const time = new Intl.DateTimeFormat(DEFAULT_LOCALE, format).format(
     modifiedTime
   );

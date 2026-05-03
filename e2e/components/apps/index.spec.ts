@@ -19,7 +19,6 @@ test.describe("can open app", () => {
   );
 
   for (const [app, { hasWindow, hideTaskbarEntry }] of apps) {
-    // eslint-disable-next-line playwright/valid-title
     test(app, async ({ page }) => {
       test.fail(
         !hasWindow && Boolean(hideTaskbarEntry),
@@ -31,7 +30,7 @@ test.describe("can open app", () => {
 
       if (url) queryParams.url = url;
 
-      await loadApp({ page }, queryParams);
+      await loadApp(queryParams)({ page });
 
       // NOTE: Some apps fully load AFTER the window has transitioned
       // eslint-disable-next-line playwright/no-wait-for-timeout

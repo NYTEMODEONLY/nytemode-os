@@ -20,13 +20,16 @@ import {
   type WindowStates,
 } from "contexts/session/types";
 import defaultSession from "public/session.json";
+import { setCurrentCloseEffect } from "utils/closeEffect";
 import {
   DEFAULT_ASCENDING,
   DEFAULT_CLOCK_SOURCE,
+  DEFAULT_CLOSE_EFFECT,
   DEFAULT_THEME,
   DEFAULT_WALLPAPER,
   DEFAULT_WALLPAPER_FIT,
   DESKTOP_PATH,
+  MILLISECONDS_IN_HOUR,
   SESSION_FILE,
   SHORTCUT_EXTENSION,
   SYSTEM_FILES,
@@ -34,6 +37,7 @@ import {
 } from "utils/constants";
 import {
   getExtension,
+  maybeRequestIdleCallback,
   preloadLibs,
   updateIconPositionsIfEmpty,
 } from "utils/functions";
@@ -56,8 +60,10 @@ const useSessionContextState = (): SessionContextState => {
   const [stackOrder, setStackOrder] = useState<string[]>([]);
   const [themeName, setThemeName] = useState(DEFAULT_THEME);
   const [clockSource, setClockSource] = useState(DEFAULT_CLOCK_SOURCE);
-  const [cursor, setCursor] = useState("");
+  const [cursor, setCursor] = useState<string | undefined>();
   const [aiEnabled, setAiEnabled] = useState(false);
+  const [closeEffect, setCloseEffect] = useState(DEFAULT_CLOSE_EFFECT);
+  const [lazySheep, setLazySheep] = useState(false);
   const [windowStates, setWindowStates] = useState(
     Object.create(null) as WindowStates
   );
@@ -207,14 +213,16 @@ const useSessionContextState = (): SessionContextState => {
 
   useEffect(() => {
     if (!loadingDebounceRef.current && sessionLoaded && !haltSession) {
-      const updateSessionFile = (): void => {
+      maybeRequestIdleCallback(() => {
         writeFile(
           SESSION_FILE,
           JSON.stringify({
             aiEnabled,
             clockSource,
+            closeEffect,
             cursor,
             iconPositions,
+            lazySheep,
             recentFiles,
             runHistory,
             sortOrders,
@@ -226,23 +234,16 @@ const useSessionContextState = (): SessionContextState => {
           }),
           true
         );
-      };
-
-      if (
-        "requestIdleCallback" in window &&
-        typeof window.requestIdleCallback === "function"
-      ) {
-        requestIdleCallback(updateSessionFile);
-      } else {
-        updateSessionFile();
-      }
+      });
     }
   }, [
     aiEnabled,
     clockSource,
+    closeEffect,
     cursor,
     haltSession,
     iconPositions,
+    lazySheep,
     recentFiles,
     runHistory,
     sessionLoaded,
@@ -284,6 +285,7 @@ const useSessionContextState = (): SessionContextState => {
           }
 
           if (session.clockSource) setClockSource(session.clockSource);
+          if (session.closeEffect) setCloseEffect(session.closeEffect);
           if (session.cursor) setCursor(session.cursor);
           if (session.aiEnabled) setAiEnabled(session.aiEnabled);
           if (session.themeName) setThemeName(session.themeName);
@@ -361,6 +363,17 @@ const useSessionContextState = (): SessionContextState => {
           } else if (!Array.isArray(session.recentFiles)) {
             setRecentFiles(DEFAULT_SESSION?.recentFiles || []);
           }
+          if (session.lazySheep) {
+            setLazySheep(session.lazySheep);
+
+            maybeRequestIdleCallback(() => {
+              window.setTimeout(async () => {
+                const { spawnSheep } = await import("utils/spawnSheep");
+
+                spawnSheep(true);
+              }, MILLISECONDS_IN_HOUR);
+            });
+          }
         } catch (error) {
           if ((error as ApiError)?.code === "ENOENT") {
             deletePath(SESSION_FILE);
@@ -379,9 +392,12 @@ const useSessionContextState = (): SessionContextState => {
     }
   }, [deletePath, lstat, readFile, rootFs, setWallpaper]);
 
+  useEffect(() => setCurrentCloseEffect(closeEffect), [closeEffect]);
+
   return {
     aiEnabled,
     clockSource,
+    closeEffect,
     cursor,
     foregroundId,
     iconPositions,
@@ -392,6 +408,7 @@ const useSessionContextState = (): SessionContextState => {
     sessionLoaded,
     setAiEnabled,
     setClockSource,
+    setCloseEffect,
     setCursor,
     setForegroundId,
     setHaltSession,

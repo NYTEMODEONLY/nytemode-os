@@ -10,7 +10,11 @@ NYTEMODE OS is a personalized fork of [DustinBrett/daedalOS](https://github.com/
 
 > **For contributors:** read [`CLAUDE.md`](./CLAUDE.md) and [`NYTEMODE_OS_PROJECT_RULES.md`](./NYTEMODE_OS_PROJECT_RULES.md) before changing code. Active work is tracked in [`CURRENT_TASKS.md`](./CURRENT_TASKS.md). Adding a desktop icon? Use [`DESKTOP_ICON_TEMPLATE.md`](./DESKTOP_ICON_TEMPLATE.md).
 
-[![Feature Overview](https://img.youtube.com/vi/RRLq3T0Surs/mqdefault.jpg)](http://www.youtube.com/watch?v=RRLq3T0Surs)
+![Screenshot](https://raw.githubusercontent.com/DustinBrett/daedalOS/refs/heads/main/public/screenshot.png?raw=true)
+
+### Feature Overview
+
+[![Feature Overview](https://img.youtube.com/vi/djCqHH0SCmA/mqdefault.jpg)](http://www.youtube.com/watch?v=djCqHH0SCmA)
 
 # System 🧠
 
@@ -73,7 +77,7 @@ NYTEMODE OS is a personalized fork of [DustinBrett/daedalOS](https://github.com/
 - Date tooltip
 - Calendar popup
 
-### Background
+### Background & Screensaver
 
 - Dynamic animated wallpapers ([OffscreenCanvas](https://developer.mozilla.org/en-US/docs/Web/API/OffscreenCanvas)/[Web Worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers))
   - [Waves](https://www.vantajs.com/?effect=waves)
@@ -83,7 +87,13 @@ NYTEMODE OS is a personalized fork of [DustinBrett/daedalOS](https://github.com/
 - Set via image/video (Fill, Fit, Stretch, Tile, Center)
 - Picture Slideshow
 - [Astronomy Picture of the Day](https://api.nasa.gov/#apod)
+- [Art Institute of Chicago](https://api.artic.edu/docs/)
+- [Lorem Picsum](https://picsum.photos/)
 - AI Generated Wallpapers [Stable Diffusion](https://stability.ai/stable-diffusion)
+- Custom screen saver file support
+  - [3D FlowerBox](https://github.com/kevin-shannon/3D-FlowerBox)
+  - [3D Maze](https://github.com/ibid-11962/Windows-95-3D-Maze-Screensaver)
+  - [Pipes](https://github.com/1j01/pipes)
 
 ### URL
 
@@ -242,23 +252,23 @@ NYTEMODE OS is a personalized fork of [DustinBrett/daedalOS](https://github.com/
 
 ##### Requirements
 
-- [Node.js](https://nodejs.org/en/download/) — `.nvmrc` pins 22.0.0; `package.json` accepts `^18.18 || ^19.8 || >= 20`
-- npm (the canonical package manager for this fork; upstream's yarn-based docs still work but `package-lock.json` is the source of truth here)
+- [Node.js](https://nodejs.org/en/download/) — `.nvmrc` pins 22.0.0
+- [Yarn](https://classic.yarnpkg.com/) — `yarn.lock` is the source of truth. Upstream uses a `Burn-My-Windows` git dep that needs yarn's git-clone behavior to install cleanly; npm bails out.
 
 ##### Development
 
 ```
-npm install --legacy-peer-deps
-npm run build:prebuild
-npm run dev
+NODE_OPTIONS=--openssl-legacy-provider yarn install
+yarn build:prebuild
+yarn dev
 ```
 
 ##### Production build
 
 ```
-npm install --legacy-peer-deps
-npm run build
-npm run serve
+NODE_OPTIONS=--openssl-legacy-provider yarn install
+yarn build
+yarn serve
 ```
 
 ##### Deploy to Vercel
@@ -279,6 +289,5 @@ docker run -dp 3000:3000 --rm --name daedalos daedalos
 
 ##### Notes
 
-- `--legacy-peer-deps` is required: React 19 conflicts with several React-18-pinned peer ranges in the dep graph.
-- If during install you receive the error `digital envelope routines::unsupported`, set `NODE_OPTIONS=--openssl-legacy-provider` ([1](https://github.com/DustinBrett/daedalOS/blob/main/Dockerfile#L3), [2](https://github.com/DustinBrett/daedalOS/blob/main/.github/workflows/main.yml#L17), [3](https://stackoverflow.com/a/69699772/5895982)).
-- `npm run build:prebuild` regenerates icons, search index, RSS, robots, the shortcut cache, and the v9p filesystem manifest. Re-run it after any change under `public/`.
+- `NODE_OPTIONS=--openssl-legacy-provider` is required during install: browserfs runs a webpack-4 build in its postinstall step, which fails on Node ≥ 17 without the legacy OpenSSL provider ([1](https://github.com/DustinBrett/daedalOS/blob/main/Dockerfile#L3), [2](https://github.com/DustinBrett/daedalOS/blob/main/.github/workflows/main.yml#L17), [3](https://stackoverflow.com/a/69699772/5895982)).
+- `yarn build:prebuild` regenerates icons, search index, RSS, robots, the shortcut cache, and the v9p filesystem manifest. Re-run it after any change under `public/`.

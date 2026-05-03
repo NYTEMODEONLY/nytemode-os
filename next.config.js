@@ -6,6 +6,7 @@ const bundleAnalyzer = process.env.npm_config_argv?.includes(
   "build:bundle-analyzer"
 );
 
+const path = require("path");
 const webpack = require("webpack");
 
 /**
@@ -25,6 +26,21 @@ const nextConfig = {
     },
   },
   devIndicators: false,
+  headers: async () => [
+    {
+      source: "/:path*",
+      headers: [
+        {
+          key: "Cross-Origin-Opener-Policy",
+          value: "same-origin",
+        },
+        {
+          key: "Cross-Origin-Embedder-Policy",
+          value: "credentialless",
+        },
+      ],
+    },
+  ],
   output: "export",
   productionBrowserSourceMaps: false,
   reactProductionProfiling: false,
@@ -50,12 +66,24 @@ const nextConfig = {
       })
     );
 
+    config.resolve.alias = config.resolve.alias || {};
+    config.resolve.alias["MediaInfoModule.wasm"] = path.resolve(
+      __dirname,
+      "public/System/mediainfo.js/MediaInfoModule.wasm"
+    );
+
     config.resolve.fallback = config.resolve.fallback || {};
     config.resolve.fallback.module = false;
     config.resolve.fallback.perf_hooks = false;
 
     config.module.parser.javascript = config.module.parser.javascript || {};
     config.module.parser.javascript.dynamicImportFetchPriority = "high";
+
+    config.module.rules.push({
+      include: path.resolve(__dirname, "node_modules/Burn-My-Windows"),
+      test: /\.(frag|glsl|xml)$/,
+      type: "asset/source",
+    });
 
     return config;
   },

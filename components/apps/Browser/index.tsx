@@ -1,5 +1,5 @@
 import { basename, join, resolve } from "path";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import useProxyMenu, {
   type ProxyState,
 } from "components/apps/Browser/useProxyMenu";
@@ -22,6 +22,7 @@ import {
   HOME_PAGE,
   NOT_FOUND,
   PROXIES,
+  SURF_TO_MISC,
   bookmarks,
 } from "components/apps/Browser/config";
 import { type ComponentProcessProps } from "components/system/Apps/RenderComponent";
@@ -48,9 +49,16 @@ import {
 } from "utils/functions";
 import {
   getInfoWithExtension,
+  getModifiedTime,
   getShortcutInfo,
 } from "components/system/Files/FileEntry/functions";
 import { useSession } from "contexts/session";
+
+declare module "react" {
+  interface IframeHTMLAttributes<T> extends React.HTMLAttributes<T> {
+    credentialless?: "credentialless";
+  }
+}
 
 const Browser: FC<ComponentProcessProps> = ({ id }) => {
   const {
@@ -127,13 +135,23 @@ const Browser: FC<ComponentProcessProps> = ({ id }) => {
         if (isHtml) setSrcDoc((await readFile(addressInput)).toString());
         setIcon(id, processDirectory.Browser.icon);
 
-        if (addressInput.toLowerCase().startsWith(DINO_GAME.url)) {
+        const loadLocalSite = (localPath: string, localTitle: string): void => {
+          iframeRef.current?.removeAttribute("sandbox");
           changeIframeWindowLocation(
-            `${window.location.origin}${DINO_GAME.path}`,
+            `${window.location.origin}${localPath}`,
             contentWindow
           );
-          prependFileToTitle(`${DINO_GAME.url}/`);
+          prependFileToTitle(localTitle);
+        };
+        const lowerAddressInput = addressInput.toLowerCase();
+
+        if (lowerAddressInput.startsWith(SURF_TO_MISC.url)) {
+          loadLocalSite(SURF_TO_MISC.path, SURF_TO_MISC.name);
+        } else if (lowerAddressInput.startsWith(DINO_GAME.url)) {
+          loadLocalSite(DINO_GAME.path, `${DINO_GAME.url}/`);
         } else if (!isHtml) {
+          iframeRef.current?.setAttribute("sandbox", IFRAME_CONFIG.sandbox);
+
           const processedUrl = await getUrlOrSearch(addressInput);
 
           if (
@@ -173,18 +191,18 @@ const Browser: FC<ComponentProcessProps> = ({ id }) => {
                       }
                     }
 
-                    const stats = await stat(
+                    const filePath =
                       shortcutUrl && (await exists(shortcutUrl))
                         ? shortcutUrl
-                        : href
-                    );
+                        : href;
+                    const stats = await stat(filePath);
                     const isDir = stats.isDirectory();
 
                     return {
                       description,
                       href: isDir && shortcutUrl ? shortcutUrl : href,
                       icon: isDir ? "folder" : undefined,
-                      modified: stats.mtime,
+                      modified: getModifiedTime(filePath, stats),
                       size: isDir || shortcutUrl ? undefined : stats.size,
                     };
                   })
@@ -229,9 +247,7 @@ const Browser: FC<ComponentProcessProps> = ({ id }) => {
                   }
 
                   if (column === "M") {
-                    return sortValue(
-                      ({ modified }) => modified?.getTime() ?? 0
-                    );
+                    return sortValue(({ modified }) => modified ?? 0);
                   }
 
                   if (column === "D") {
@@ -378,6 +394,10 @@ const Browser: FC<ComponentProcessProps> = ({ id }) => {
       updateRecentFiles,
     ]
   );
+  const supportsCredentialless = useMemo(
+    () => "credentialless" in HTMLIFrameElement.prototype,
+    []
+  );
 
   useEffect(() => {
     if (process && history[position] !== currentUrl.current) {
@@ -406,7 +426,7 @@ const Browser: FC<ComponentProcessProps> = ({ id }) => {
           </Button>
           <Button
             disabled={!canGoForward}
-            onClick={() => changeHistory(+1)}
+            onClick={() => changeHistory(1)}
             {...label("Click to go forward")}
             {...forwardMenu}
           >
@@ -484,9 +504,10 @@ const Browser: FC<ComponentProcessProps> = ({ id }) => {
         srcDoc={srcDoc || undefined}
         title={id}
         {...IFRAME_CONFIG}
+        credentialless={supportsCredentialless ? "credentialless" : undefined}
       />
     </StyledBrowser>
   );
 };
 
-export default Browser;
+export default memo(Browser);
