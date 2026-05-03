@@ -1,262 +1,106 @@
-# NYTEMODE OS - Current Development Tasks
+# NYTEMODE OS — Current Tasks
 
-## 🎯 Active Development Status
+**Project:** NYTEMODE OS Desktop Environment
+**Live:** https://os.nytemode.com
+**Repository:** https://github.com/NYTEMODEONLY/nytemode-os
+**Upstream:** https://github.com/DustinBrett/daedalOS
+**Last updated:** 2026-05-03
+**Status:** Returning from ~7-month dormancy. Re-onboarding in progress.
 
-**Project**: NYTEMODE OS Desktop Environment
-**Live Site**: https://os.nytemode.com
-**Repository**: https://github.com/NYTEMODEONLY/nytemode-os
-**Last Updated**: January 2025
-
----
-
-## ✅ Recently Completed Tasks
-
-### Icon Visibility Fix (January 2025)
-
-- **Issue**: Mobile favicon not displaying on iOS Safari and Firefox
-- **Resolution**:
-  - ✅ Converted WebP favicon to proper ICO format
-  - ✅ Added comprehensive mobile icon support
-  - ✅ Implemented iOS-specific meta tags and fallbacks
-  - ✅ Created multiple icon formats (16x16, 32x32, 180x180, etc.)
-  - ✅ Added web app manifest for PWA support
-  - ✅ Deployed fixes and verified functionality
-
-### Project Analysis & Documentation
-
-- ✅ Complete workspace scan and analysis
-- ✅ Created comprehensive development rules (`NYTEMODE_OS_PROJECT_RULES.md`)
-- ✅ Established project structure understanding
-- ✅ Documented all applications and features
-- ✅ Set up task tracking system
+> Read [`CLAUDE.md`](./CLAUDE.md) and [`NYTEMODE_OS_PROJECT_RULES.md`](./NYTEMODE_OS_PROJECT_RULES.md) before picking up work here.
 
 ---
 
-## 🔄 Current Priority Tasks
+## 🔭 Where the project sits today
 
-### High Priority (Critical)
-
-- [ ] **Performance Audit**
-
-  - [ ] Analyze bundle size and loading times
-  - [ ] Identify optimization opportunities
-  - [ ] Test Core Web Vitals compliance
-  - [ ] Monitor mobile performance
-
-- [ ] **Cross-Browser Testing**
-  - [ ] Verify all features work in Chrome, Firefox, Safari, Edge
-  - [ ] Test mobile functionality on various devices
-  - [ ] Check PWA installation on mobile devices
-  - [ ] Validate accessibility compliance
-
-### Medium Priority (Important)
-
-- [ ] **Code Quality Improvements**
-
-  - [ ] Review TypeScript strict mode compliance
-  - [ ] Audit ESLint warnings and errors
-  - [ ] Update dependencies to latest stable versions
-  - [ ] Optimize styled-components usage
-
-- [ ] **Documentation Updates**
-  - [ ] Update README.md with latest features
-  - [ ] Document API changes and breaking changes
-  - [ ] Create developer onboarding guide
-  - [ ] Update screenshot and demo video
-
-### Low Priority (Enhancement)
-
-- [ ] **Feature Enhancements**
-  - [ ] Review IDEAS.md for next features to implement
-  - [ ] Evaluate user feedback for improvements
-  - [ ] Consider accessibility improvements
-  - [ ] Plan internationalization support
+- **Dormancy window:** Last production deployment ~2025-09 (≈238 days ago). Last commit on `origin/main` is `cc4bf44e "Fix NYTEMODE favicon format"`.
+- **Fork divergence vs. `DustinBrett/daedalOS`:** 39 commits ahead, 131 commits behind. Last common ancestor is `f77cdc8b "Pkg upgrades"` (2025-03-18). Upstream has had heavy activity during our dormancy — a sync will be a real piece of work, not a fast-forward.
+- **Local working tree is dirty.** Carry-forward state from the prior session (May 2025-ish):
+  - Snackulator icon iterations: untracked `*_v2`, `*_v3`, `*_v4` PNGs at every resolution. The committed `snackulator_icon.png` (and 48x48 variant) was deleted on disk; the SVG source was modified.
+  - `public/Users/Public/Desktop/Snacks App.url` deleted; `Snackulator.url` already lives in `public/Users/Public/Desktop/`.
+  - Prettier nits in `utils/constants.ts` (multi-line description; trailing comma in `SYSTEM_FILES`).
+  - Untracked: `tmp_conversion/`, several stray `.DS_Store`, `DESKTOP_ICON_TEMPLATE.md` (already added — see below; this is a real working doc).
+- **Vercel:** Authed as `nytemode` on team `violetmyst`. Project name on Vercel is `nytemode-os`, latest production URL is `https://os.nytemode.com`. CLI is good to go; no re-auth needed.
 
 ---
 
-## 🐛 Known Issues
+## 🎯 Re-onboarding queue (pick up here)
 
-### Minor Issues
+Ordered roughly by what unblocks the most. Re-prioritize with the maintainer before sinking serious time into anything past the first section.
 
-- [ ] **Node.js Version Warning**
-  - Current: 18.17.0
-  - Required: ^18.18.0 || ^19.8.0 || >= 20.0.0
-  - Impact: Build warnings but functional
-  - Priority: Low
+### Step 0 — Stabilize the working tree
 
-### Browser-Specific Issues
+- [ ] Decide the fate of the **Snackulator icon iterations** (`_v2/_v3/_v4`). Pick one as the canonical icon, delete the rest, and either re-commit `snackulator_icon.png` or update the shortcut to point at the chosen variant. Don't leave four parallel versions sitting untracked.
+- [ ] Re-run `npm run build:prebuild` after the icon decision so `public/.index/{shortcutCache,desktopIcons}.json` reflect the live state.
+- [ ] Decide whether the prettier-only diff in `utils/constants.ts` should be committed standalone or rolled into the icon PR.
+- [ ] Add `.DS_Store` patterns to `.gitignore` if not already covered, and delete the tracked-disk-junk untracked files.
+- [ ] `git status` should be clean (or contain only intentional WIP) before any other work begins.
 
-- [ ] **Safari-specific quirks to monitor**
-  - Icon caching behavior
-  - WebWorker performance
-  - Touch event handling
+### Step 1 — Re-validate the build & deploy path
 
----
+- [ ] `nvm use` against `.nvmrc` (Node 22.0.0) — local machine is currently on 24.3.0. Confirm that's still the targeted runtime, or update the `.nvmrc`/`engines` to a current LTS.
+- [ ] `npm install --legacy-peer-deps` from a clean `node_modules`. Note any new resolution warnings.
+- [ ] `npm run build` end-to-end. Expect prebuild scripts (`robots`, `rssBuilder`, `searchIndex`, `preloadIcons`, `cacheShortcuts`, `fs2json`) to all succeed.
+- [ ] `npm run dev` and smoke-test the desktop in Chrome + iOS Safari (real device, not just DevTools).
+- [ ] `vercel deploy` (preview) — confirm Vercel still builds cleanly against current `package-lock.json`. If it fails, fix locally before pushing to `main`.
 
-## 🚀 Upcoming Features (from IDEAS.md)
+### Step 2 — Decide the upstream-sync strategy
 
-### High Priority Features
+- [ ] Read through 131 upstream commits since `f77cdc8b` and decide whether to: (a) hard-pause and rebase NYTEMODE customizations on top of the latest upstream, (b) cherry-pick a small set of upstream fixes, or (c) keep diverging deliberately. Document the choice here.
+- [ ] If syncing: protect NYTEMODE branding (see CLAUDE.md "Branding" section) and verify the Matrix wallpaper purple recolor + custom desktop icons survive the rebase.
 
-- [ ] **Progressive Web App Improvements**
+### Step 3 — Health check & known regressions
 
-  - [ ] Service Worker implementation
-  - [ ] Offline functionality
-  - [ ] App installation prompts
-
-- [ ] **Accessibility Enhancements**
-  - [ ] Screen reader compatibility
-  - [ ] Keyboard navigation improvements
-  - [ ] ARIA label compliance
-
-### Medium Priority Features
-
-- [ ] **Screen Savers Implementation**
-
-  - [ ] 3D Pipes screensaver
-  - [ ] Matrix digital rain
-  - [ ] DVD logo bouncer
-
-- [ ] **System Tray Icons**
-  - [ ] Notification area
-  - [ ] System status indicators
-  - [ ] Quick access to settings
+- [ ] Cross-browser smoke test (Chrome, Firefox, Safari, Edge desktop; iOS Safari, Android Chrome mobile). Report any regressions that crept in during dormancy.
+- [ ] PWA install flow on iOS — last verified 2025-01. Verify still works post-iOS updates.
+- [ ] Lighthouse pass on `os.nytemode.com` to capture a current performance baseline before any changes.
+- [ ] Audit dependency vulns: `npm audit` summary — note critical/high counts, decide which to upgrade.
 
 ---
 
-## 🔧 Development Environment
+## 🪜 Standing backlog (medium-term)
 
-### Required Tools
+These were already in flight or planned before dormancy. Re-evaluate after Steps 0–3 are clean.
 
-- ✅ Node.js (18.17.0 - needs update to 20+)
-- ✅ npm with --legacy-peer-deps flag
-- ✅ Vercel CLI for deployment
-- ✅ TypeScript compiler
-- ✅ Playwright for testing
-
-### Build Process
-
-- ✅ Pre-build scripts working correctly
-- ✅ Static export generation functional
-- ✅ Vercel deployment pipeline operational
-- ✅ Icon processing and caching working
+- **Bundle size.** Initial bundle ~10MB. Targets: `<8MB` initial, FCP `<2s`, Lighthouse `>90`.
+- **Service worker / offline.** Inherited daedalOS uses none; adding one is in `IDEAS.md` but unimplemented in our fork.
+- **Accessibility audit.** Keyboard nav, screen reader compatibility, ARIA labels — never seriously audited.
+- **Test coverage.** Jest + Playwright are wired up but coverage is shallow. Critical user flows (file open, app launch, drag-drop) deserve deterministic e2e tests.
+- **TypeScript hygiene.** `next.config.js` has `ignoreBuildErrors: true`. There are real type errors hiding behind that flag. Fix incrementally and eventually flip the switch off.
+- **Screen savers, system tray, custom desktop layouts** — see `IDEAS.md` for the long upstream-inherited backlog. Many of these are nice-to-have, not roadmap.
 
 ---
 
-## 📊 Performance Metrics
+## 🧊 Frozen until upstream sync decision
 
-### Current Status
-
-- **Bundle Size**: ~10MB (needs optimization)
-- **First Load**: ~3-5 seconds (target: <3s)
-- **Mobile Performance**: Good (post icon fix)
-- **Core Web Vitals**: Needs assessment
-
-### Optimization Targets
-
-- [ ] Reduce initial bundle size to <8MB
-- [ ] Improve First Contentful Paint to <2s
-- [ ] Achieve Lighthouse score >90
-- [ ] Optimize mobile loading experience
+Anything that touches files heavily edited upstream (e.g. `components/system/Taskbar`, `components/system/Window`, the Terminal, the file system layer) should wait until we've decided whether to rebase. Otherwise we're piling NYTEMODE-only changes onto an old base and making the eventual sync worse.
 
 ---
 
-## 🧪 Testing Checklist
+## 🗂️ Where to put new work
 
-### Manual Testing Required
-
-- [ ] **Desktop Browsers**
-
-  - [ ] Chrome (latest)
-  - [ ] Firefox (latest)
-  - [ ] Safari (latest)
-  - [ ] Edge (latest)
-
-- [ ] **Mobile Testing**
-  - [ ] iOS Safari (various versions)
-  - [ ] Android Chrome
-  - [ ] Mobile Firefox
-  - [ ] PWA installation flow
-
-### Automated Testing
-
-- [ ] **E2E Tests** (Playwright)
-
-  - [ ] Review existing test coverage
-  - [ ] Add tests for critical user flows
-  - [ ] Test app installations and file operations
-
-- [ ] **Unit Tests** (Jest)
-  - [ ] Component testing coverage
-  - [ ] Utility function testing
-  - [ ] Context provider testing
+- A user-facing change to a desktop icon → follow `DESKTOP_ICON_TEMPLATE.md`, update this file's "Recently completed" section when done.
+- A new app component → `components/apps/<AppName>/{index.tsx, config.ts}`, register in the process system, add icon set, regenerate caches.
+- A branding change → `pages/_document.tsx`, `public/site.webmanifest`, `utils/constants.ts` `PACKAGE_DATA`. Mirror in any `.url` shortcuts and icon files.
+- A behavior tweak from upstream daedalOS → cherry-pick from `upstream/main` rather than re-implementing.
 
 ---
 
-## 🔄 Deployment Pipeline
+## ✅ Recently completed (prior session — pre-dormancy)
 
-### Current Status
+Kept here for context. Do not re-do these.
 
-- ✅ **Development**: `npm run dev` working
-- ✅ **Preview**: `vercel deploy` working
-- ✅ **Production**: `vercel --prod` working
-- ✅ **Automatic**: GitHub integration active
-
-### Deployment Checklist
-
-- [ ] Run full test suite before deployment
-- [ ] Verify build completes without errors
-- [ ] Test preview deployment thoroughly
-- [ ] Monitor production deployment for issues
-- [ ] Verify all applications load correctly
+- **Snackulator desktop icon (Apr–May 2025).** Renamed from `Snacks App.url` (space in filename was causing render bugs) to `Snackulator.url`. Custom pink ice-cream-cone icon designed (SVG source + multi-res PNG export via ImageMagick). Multiple icon revisions in flight (`_v2`/`_v3`/`_v4`) — see Step 0 above to finalize.
+- **NYTEMODE website desktop shortcut (`NYTEMODE.url`).**
+- **Mobile favicon overhaul (Jan 2025).** Replaced the upstream WebP-masquerading-as-ICO with a real ICO, added apple-touch-icon set, iOS-specific `<meta>` tags, `site.webmanifest` for PWA support. Deployed and verified on iOS Safari + Firefox.
+- **Comprehensive project docs.** `NYTEMODE_OS_PROJECT_RULES.md`, `CURRENT_TASKS.md`, `DESKTOP_ICON_TEMPLATE.md` initialized.
+- **Branding swaps.** CINDR token shortcut + flame icon, OUTWERD shortcut, Snackulator shortcut, Matrix wallpaper recolor to brand purple `#7c519d`, taskbar off-black/grey color scheme.
+- **`Refresh.url` removed** from desktop and added to `SYSTEM_FILES` ignore set.
 
 ---
 
-## 📝 Notes & Observations
+## 📌 Notes for whoever picks this up next
 
-### Architecture Strengths
-
-- **Modular Design**: Well-organized component structure
-- **Feature Rich**: Comprehensive application ecosystem
-- **Performance**: Good use of Web Workers and OffscreenCanvas
-- **Modern Stack**: Latest React, Next.js, TypeScript
-
-### Areas for Improvement
-
-- **Bundle Size**: Could benefit from code splitting
-- **Documentation**: Some components need better documentation
-- **Testing**: E2E test coverage could be expanded
-- **Accessibility**: Needs comprehensive audit
-
-### Recent Insights
-
-- Mobile icon issues were related to WebP format masquerading as ICO
-- iOS Safari requires specific meta tags and icon formats
-- Vercel static export works well for this project type
-- Project has extensive feature set that needs careful maintenance
-
----
-
-## 🎯 Next Actions
-
-1. **Immediate (This Week)**
-
-   - [ ] Node.js version update
-   - [ ] Performance audit
-   - [ ] Cross-browser testing
-
-2. **Short Term (This Month)**
-
-   - [ ] Code quality improvements
-   - [ ] Documentation updates
-   - [ ] Accessibility audit
-
-3. **Long Term (Next Quarter)**
-   - [ ] Major feature additions from IDEAS.md
-   - [ ] PWA enhancements
-   - [ ] Performance optimizations
-
----
-
-**Maintainer**: NYTEMODEONLY
-**Last Review**: January 2025
-**Status**: Active Development
+- This file is the canonical "what's in flight" document. Update it the moment status changes — don't let it go stale again.
+- The previous version of this file pretended to be dated "January 2025" while containing May 2025 content. Don't do that. Use real dates and overwrite stale claims.
+- If you're starting a new line of work that doesn't fit any section above, add a section. The structure exists to serve the work, not the other way around.

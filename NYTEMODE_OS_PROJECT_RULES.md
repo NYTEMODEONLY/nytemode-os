@@ -1,13 +1,23 @@
 # NYTEMODE OS Project Development Rules & Guidelines
 
+> Companion doc to [`CLAUDE.md`](./CLAUDE.md). CLAUDE.md is the short, always-loaded brief; this file is the long-form rulebook. Read both.
+
 ## 🌌 Project Overview
 
-**NYTEMODE OS** is a comprehensive desktop environment in the browser, hosted at https://os.nytemode.com
+**NYTEMODE OS** is a personalized, browser-based desktop environment, live at https://os.nytemode.com.
 
-- **Repository**: https://github.com/NYTEMODEONLY/nytemode-os
-- **Based on**: Fork of DustinBrett/daedalOS
-- **Tech Stack**: Next.js 15, React 19, TypeScript, styled-components
-- **Deployment**: Vercel with static export
+- **Repository (origin):** https://github.com/NYTEMODEONLY/nytemode-os
+- **Upstream:** Fork of [DustinBrett/daedalOS](https://github.com/DustinBrett/daedalOS) — `git remote add upstream https://github.com/DustinBrett/daedalOS.git`
+- **Tech stack:** Next.js 15, React 19, TypeScript 5.8, styled-components 6, BrowserFS over IndexedDB
+- **Deployment:** Vercel (`violetmyst/nytemode-os` project, static export, custom domain `os.nytemode.com`)
+- **Maintainer:** NYTEMODEONLY
+
+### Fork status (as of 2026-05-03)
+
+- Last common ancestor with upstream: `f77cdc8b` "Pkg upgrades" (2025-03-18).
+- Ahead of upstream: ~39 NYTEMODE customization commits.
+- Behind upstream: ~131 commits — upstream is highly active. Plan a real sync, not a fast-forward.
+- Last production deployment: ~mid-September 2025. Project paused for ~7 months and is now being revisited.
 
 ---
 
@@ -97,26 +107,34 @@ public/            # Static assets and file system
 
 ### Scripts Understanding
 
-- `npm run build:prebuild`: Generates essential files (icons, search index, etc.)
-- `npm run build`: Builds production-ready static export
-- `npm run dev`: Development server
-- `vercel deploy`: Preview deployment
-- `vercel --prod`: Production deployment
+- `npm install --legacy-peer-deps` — required; React 19 + several React-18-pinned libs collide otherwise
+- `npm run build:prebuild` — generates essential files (icons, search index, RSS, robots, shortcut cache, fs.9p.json)
+- `npm run build` — runs prebuild then the static `next build`
+- `npm run dev` — Next.js dev server (http://localhost:3000)
+- `npm run serve` — serves the built `out/` directory
+- `npm run e2e` — Playwright e2e suite
+- `npm test` — Jest unit tests
+- `vercel deploy` — preview deployment
+- `vercel --prod` — production deployment
 
-### Pre-build Scripts
+> Package manager: **npm** (`package-lock.json` is authoritative). `yarn.lock` and `.yarnrc.yml` linger from upstream but are not used by Vercel or our local workflow.
 
-1. **robots.js**: Generates robots.txt
-2. **rssBuilder.js**: Creates RSS feed
-3. **searchIndex.js**: Builds search index
-4. **preloadIcons.js**: Processes and caches icons
-5. **cacheShortcuts.js**: Caches desktop shortcuts
-6. **fs2json.js**: Converts file system to JSON
+### Pre-build Scripts (run in order by `build:prebuild`)
+
+1. **robots.js** — generates `public/robots.txt`
+2. **rssBuilder.js** — creates `public/rss.xml`
+3. **searchIndex.js** — builds the in-app search index
+4. **preloadIcons.js** — processes and caches icons under `public/.index/icons/`
+5. **cacheShortcuts.js** — caches desktop shortcuts (`public/.index/shortcutCache.json`, `public/.index/desktopIcons.json`)
+6. **fs2json.js** — converts the `public/` filesystem to `public/.index/fs.9p.json`
+
+Re-run `npm run build:prebuild` whenever you add/rename/move anything under `public/`.
 
 ### Build Configuration
 
-- **Output**: Static export (`output: "export"`)
-- **Deployment**: Vercel with `outputDirectory: ".next"`
-- **Install**: `npm install --legacy-peer-deps`
+- **Output:** Static export (`output: "export"` in `next.config.js`)
+- **Deployment:** Vercel with `framework: "nextjs"`, `outputDirectory: ".next"`, `installCommand: "npm install --legacy-peer-deps"`, `buildCommand: "npm run build"` (see `vercel.json`)
+- **Type checking:** `typescript.ignoreBuildErrors: true` and `eslint.ignoreDuringBuilds: true` — a green build does **not** prove type/lint cleanliness. Verify separately when correctness matters.
 
 ---
 
@@ -191,7 +209,15 @@ public/            # Static assets and file system
 
 ## 🚀 Deployment Guidelines
 
-### Development Deployment
+### Vercel context
+
+- Authed account on this machine: `nytemode`
+- Team: `violetmyst`
+- Project: `nytemode-os` (Vercel internal slug; deployment URLs read as `nytemode-*-violetmyst.vercel.app`)
+- Custom domain: `os.nytemode.com`
+- Auto-deploy: GitHub integration on `main` (when active). After dormancy, manually verify a preview deploy before letting `main` auto-promote.
+
+### Preview Deployment
 
 ```bash
 npm run build
@@ -209,7 +235,7 @@ vercel --prod
 
 - No sensitive data in client-side code
 - All configs in `utils/constants.ts`
-- Use Next.js environment variables for build-time configs
+- Use Next.js environment variables for build-time configs (none currently in use; this is a fully static export)
 
 ---
 
@@ -321,6 +347,47 @@ vercel --prod
 
 ---
 
+## 🔁 Upstream Sync Strategy
+
+We are a fork. Upstream daedalOS keeps shipping. To keep NYTEMODE OS healthy:
+
+### Add the upstream remote (one-time)
+
+```bash
+git remote add upstream https://github.com/DustinBrett/daedalOS.git
+git fetch upstream main
+```
+
+### Inspect divergence
+
+```bash
+git log --oneline main..upstream/main      # what they have that we don't
+git log --oneline upstream/main..main      # what we have that they don't
+git merge-base main upstream/main          # last shared commit
+```
+
+### Branding files to defend during a sync
+
+These hold NYTEMODE-specific values and should generally win conflicts:
+
+- `utils/constants.ts` — `PACKAGE_DATA` (`alias`, `author`, `description`); `DEFAULT_WALLPAPER = "MATRIX"`
+- `pages/_document.tsx` — apple-touch / theme-color / manifest links and `apple-mobile-web-app-title`
+- `public/site.webmanifest` — `name`, `short_name`, theme colors
+- `public/favicon*`, `public/apple-touch-icon*`, `public/android-chrome-*` — NYTEMODE icon set
+- `public/Users/Public/Desktop/{CINDR,OUTWERD.,Snackulator,NYTEMODE}.url` — NYTEMODE-only shortcuts
+- `public/System/Icons/{cindr,outwerd,snackulator}_icon*.png` and `pc.webp` — NYTEMODE icons
+- Any wallpaper / taskbar color tweak files (Matrix purple `#7c519d`, taskbar off-black/grey)
+
+Accept upstream changes everywhere else by default.
+
+### Recommended cadence
+
+- Quarterly merge / rebase from `upstream/main` if we're keeping the project active.
+- Cherry-pick critical security or bug fixes from upstream as needed even between syncs.
+- After a sync: full `npm install --legacy-peer-deps`, `npm run build`, smoke-test in dev, deploy to a Vercel preview before promoting.
+
+---
+
 ## 🔄 Continuous Integration
 
 ### Automated Checks
@@ -394,6 +461,6 @@ vercel --prod
 
 ---
 
-**Last Updated**: January 2025
-**Project Status**: Active Development
+**Last Updated**: 2026-05-03
+**Project Status**: Returning from dormancy — re-onboarding (see `CURRENT_TASKS.md`)
 **Maintainer**: NYTEMODEONLY
