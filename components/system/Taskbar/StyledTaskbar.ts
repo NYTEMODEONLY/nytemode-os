@@ -10,7 +10,7 @@ const StyledTaskbar = styled.nav`
   height: calc(${TASKBAR_HEIGHT}px + env(safe-area-inset-bottom, 0px));
   left: 0;
   padding-bottom: env(safe-area-inset-bottom, 0);
-  position: absolute;
+  position: fixed;
   right: 0;
   width: 100vw;
   z-index: ${TASKBAR_Z_INDEX};
