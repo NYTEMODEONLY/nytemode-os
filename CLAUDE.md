@@ -16,11 +16,11 @@ Workspace-level guidance for any future Claude session working in this repo. Kee
 
 ### Fork relationship at a glance
 
-- **In sync with upstream as of 2026-05-03** (merge commit `a86d7f03`).
-- Last common ancestor: `61db23f0` "Add old personal site to browser links when available" (2026-04-28) — re-check before next sync.
-- Ahead of upstream: 43 NYTEMODE-specific commits (branding, custom icons, mobile favicon work, taskbar color tweaks, Matrix wallpaper recoloring, curated wallpaper list, Next.js 15.5.15 backport bump, doc additions, the merge commit itself).
+- **In sync with upstream as of 2026-05-10** (merge commit `5a5627d2`).
+- Last common ancestor: `1409a15e` "Add Chess game" (2026-05-09) — re-check before next sync.
+- Ahead of upstream: 46 NYTEMODE-specific commits (branding, custom icons + multi-resolution nytemode_favicon set, mobile favicon work, taskbar color tweaks, Matrix wallpaper recoloring, curated wallpaper list, Next.js 15.5.15 backport bump, doc additions, the merge commits).
 - Behind upstream: 0 (just synced — re-fetch with `git fetch upstream main` to see what's new).
-- Last production deploy: 2026-05-03 (the merge), Status `Ready` on Vercel. Project is active again; custom feature work is next.
+- Last production deploy: 2026-05-10 (post upstream Chess-game sync + NYTEMODE favicon multi-res fix). Project is active.
 
 ---
 
