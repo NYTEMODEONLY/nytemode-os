@@ -7,8 +7,9 @@ const StyledTaskbar = styled.nav`
   background-color: ${({ theme }) => theme.colors.taskbar.background};
   bottom: 0;
   contain: size layout;
-  height: ${TASKBAR_HEIGHT}px;
+  height: calc(${TASKBAR_HEIGHT}px + env(safe-area-inset-bottom, 0px));
   left: 0;
+  padding-bottom: env(safe-area-inset-bottom, 0);
   position: absolute;
   right: 0;
   width: 100vw;

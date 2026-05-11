@@ -45,53 +45,49 @@ class Document extends NextDocument {
         <Head>
           {/* Basic Meta Tags */}
           <meta charSet="utf-8" />
-          <meta name="theme-color" content="#000000" />
-
-          {/* Viewport - crucial for mobile */}
-          <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover"
-          />
+          <meta content="#000000" name="theme-color" />
 
           {/* iOS specific meta tags */}
-          <meta name="apple-mobile-web-app-capable" content="yes" />
+          <meta content="yes" name="apple-mobile-web-app-capable" />
           <meta
-            name="apple-mobile-web-app-status-bar-style"
             content="black-translucent"
+            name="apple-mobile-web-app-status-bar-style"
           />
-          <meta name="apple-mobile-web-app-title" content="NYTEMODE OS" />
-          <meta name="format-detection" content="telephone=no" />
+          <meta content="NYTEMODE OS" name="apple-mobile-web-app-title" />
+          <meta content="telephone=no" name="format-detection" />
 
           {/* Standard favicons */}
-          <link rel="icon" href="/favicon.ico" sizes="any" />
+          <link href="/favicon.ico" rel="icon" sizes="any" />
           <link
-            rel="icon"
-            type="image/png"
-            sizes="32x32"
             href="/favicon-32x32.png"
+            rel="icon"
+            sizes="32x32"
+            type="image/png"
           />
           <link
-            rel="icon"
-            type="image/png"
-            sizes="16x16"
             href="/favicon-16x16.png"
+            rel="icon"
+            sizes="16x16"
+            type="image/png"
           />
 
           {/* Apple Touch Icons - iOS strict order matters */}
-          <link rel="mask-icon" href="/favicon.ico" color="#000000" />
-          <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+          <link color="#000000" href="/favicon.ico" rel="mask-icon" />
+          <link href="/apple-touch-icon.png" rel="apple-touch-icon" />
+          {/* eslint-disable react/no-invalid-html-attribute */}
           <link
-            rel="apple-touch-icon-precomposed"
             href="/apple-touch-icon-precomposed.png"
+            rel="apple-touch-icon-precomposed"
           />
+          {/* eslint-enable react/no-invalid-html-attribute */}
           <link
+            href="/apple-touch-icon.png"
             rel="apple-touch-icon"
             sizes="180x180"
-            href="/apple-touch-icon.png"
           />
 
           {/* PWA manifest */}
-          <link rel="manifest" href="/site.webmanifest" />
+          <link href="/site.webmanifest" rel="manifest" />
 
           {/* CSS Fallback for icons - sometimes helps with stubborn mobile browsers */}
           <style

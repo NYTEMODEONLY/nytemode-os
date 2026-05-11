@@ -5,7 +5,6 @@ import { useProcesses } from "contexts/process";
 import { useSession } from "contexts/session";
 import desktopIcons from "public/.index/desktopIcons.json";
 import {
-  FAVICON_BASE_PATH,
   HIGH_PRIORITY_ELEMENT,
   ONE_TIME_PASSIVE_EVENT,
   PACKAGE_DATA,
@@ -129,27 +128,29 @@ const Metadata: FC = () => {
       )}
 
       {/* Always provide these for iOS */}
-      <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+      <link href="/apple-touch-icon.png" rel="apple-touch-icon" />
+      {/* eslint-disable react/no-invalid-html-attribute */}
       <link
-        rel="apple-touch-icon-precomposed"
         href="/apple-touch-icon-precomposed.png"
+        rel="apple-touch-icon-precomposed"
       />
+      {/* eslint-enable react/no-invalid-html-attribute */}
 
       {/* Mobile-specific override as a forced fallback */}
       {isMobileDevice && (
         <>
           <link
-            rel="shortcut icon"
             href="/apple-touch-icon.png"
+            rel="shortcut icon"
             type="image/png"
           />
-          <meta name="apple-mobile-web-app-capable" content="yes" />
-          <meta name="mobile-web-app-capable" content="yes" />
+          <meta content="yes" name="apple-mobile-web-app-capable" />
+          <meta content="yes" name="mobile-web-app-capable" />
         </>
       )}
 
       <meta
-        content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, interactive-widget=resizes-content"
+        content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, interactive-widget=resizes-content, viewport-fit=cover"
         name="viewport"
       />
       <meta content={description} name="description" />

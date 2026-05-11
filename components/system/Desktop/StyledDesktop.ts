@@ -7,6 +7,7 @@ const StyledDesktop = styled.main`
   inset: 0;
   overflow: clip;
   overscroll-behavior: none;
+  padding-top: env(safe-area-inset-top, 0);
   position: fixed;
   width: 100vw;
 
@@ -28,11 +29,11 @@ const StyledDesktop = styled.main`
 
   > canvas {
     background-color: inherit;
-    height: 100%;
+    height: calc(100% + env(safe-area-inset-top, 0px));
     left: 0;
     object-fit: cover;
     position: absolute;
-    top: 0;
+    top: calc(env(safe-area-inset-top, 0px) * -1);
     width: 100%;
     z-index: -1;
   }
