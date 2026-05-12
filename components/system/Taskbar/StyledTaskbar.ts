@@ -5,7 +5,7 @@ const TASKBAR_Z_INDEX = 100000;
 
 const StyledTaskbar = styled.nav`
   background-color: ${({ theme }) => theme.colors.taskbar.background};
-  bottom: 0;
+  bottom: calc(env(safe-area-inset-bottom, 0px) * -1);
   contain: size layout;
   height: calc(${TASKBAR_HEIGHT}px + env(safe-area-inset-bottom, 0px));
   left: 0;
@@ -15,13 +15,15 @@ const StyledTaskbar = styled.nav`
   width: 100vw;
   z-index: ${TASKBAR_Z_INDEX};
 
+  > * {
+    height: ${TASKBAR_HEIGHT}px;
+  }
+
   &::after {
     backdrop-filter: ${({ theme }) => `blur(${theme.sizes.taskbar.blur})`};
     content: "";
-    display: block;
-    height: 100%;
-    position: relative;
-    width: 100%;
+    inset: 0;
+    position: absolute;
     z-index: -${TASKBAR_Z_INDEX};
   }
 `;

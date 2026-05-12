@@ -1,8 +1,10 @@
 {
   "name": "NYTEMODE OS",
   "short_name": "NYTEMODE",
-  "start_url": "/",
+  "id": "/",
+  "start_url": "/?source=pwa-ios",
   "scope": "/",
+  "display_override": ["fullscreen", "standalone"],
   "icons": [
     {
       "src": "/android-chrome-192x192.png",

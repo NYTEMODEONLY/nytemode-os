@@ -3,7 +3,8 @@ import styled from "styled-components";
 const StyledDesktop = styled.main`
   background-color: transparent;
   contain: strict;
-  height: 100%;
+  height: 100vh;
+  height: 100dvh;
   inset: 0;
   overflow: clip;
   overscroll-behavior: none;

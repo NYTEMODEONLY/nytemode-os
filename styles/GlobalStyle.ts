@@ -20,21 +20,32 @@ const GlobalStyle = styled.createGlobalStyle`
   body,
   html {
     font-family: ${({ theme }) => theme.formats.systemFont};
+    min-height: 100%;
+    width: 100%;
   }
 
   body {
-    height: 100%;
+    background-color: ${({ theme }) => theme.colors.background};
+    height: 100vh;
+    height: 100dvh;
+    inset: 0;
     overflow: hidden;
     position: fixed;
     text-size-adjust: none;
+    width: 100vw;
   }
 
   html {
     background-color: ${({ theme }) => theme.colors.background};
-    /* stylelint-disable value-no-vendor-prefix */
-    height: -webkit-fill-available;
-    height: -moz-available;
-    /* stylelint-enable value-no-vendor-prefix */
+    height: 100%;
+    overflow: hidden;
+
+    body > div:first-of-type {
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      width: 100vw;
+    }
 
     &::before,
     &::after {

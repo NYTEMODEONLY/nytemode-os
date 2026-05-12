@@ -55,6 +55,7 @@ class Document extends NextDocument {
           />
           <meta content="NYTEMODE OS" name="apple-mobile-web-app-title" />
           <meta content="telephone=no" name="format-detection" />
+          <meta content="yes" name="mobile-web-app-capable" />
 
           {/* Standard favicons */}
           <link href="/favicon.ico" rel="icon" sizes="any" />
