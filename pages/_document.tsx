@@ -45,7 +45,7 @@ class Document extends NextDocument {
         <Head>
           {/* Basic Meta Tags */}
           <meta charSet="utf-8" />
-          <meta content="#000000" name="theme-color" />
+          <meta content="#1a1221" name="theme-color" />
 
           {/* iOS specific meta tags */}
           <meta content="yes" name="apple-mobile-web-app-capable" />
