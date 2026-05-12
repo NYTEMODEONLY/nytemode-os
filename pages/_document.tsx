@@ -45,8 +45,7 @@ class Document extends NextDocument {
         <Head>
           {/* Basic Meta Tags */}
           <meta charSet="utf-8" />
-          {/* DIAGNOSTIC: hot pink to test whether iOS paints the home-indicator zone with theme-color. Revert after test. */}
-          <meta content="#ff00ff" name="theme-color" />
+          <meta content="#000000" name="theme-color" />
 
           {/* iOS specific meta tags */}
           <meta content="yes" name="apple-mobile-web-app-capable" />
