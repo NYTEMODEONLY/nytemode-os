@@ -55,7 +55,7 @@
     "canvas-confetti": "^1.9.3",
     "chess.js": "^1.4.0",
     "decode-ico": "^0.4.1",
-    "dompurify": "^3.3.0",
+    "dompurify": "^3.4.16",
     "exif-js": "^2.3.0",
     "fflate": "^0.8.2",
     "file-type": "^21.0.0",
